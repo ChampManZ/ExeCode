@@ -22,7 +22,7 @@ const CoderunnerHeader = (props) => {
                 <option value="dart">Dart</option>
                 <option value="go">Go</option>
                 <option value="java">Java</option>
-                <option value="javascript">JavaScript</option>
+                <option value="javascript" selected>JavaScript</option>
                 <option value="kotlin">Kotlin</option>
                 <option value="lua">Lua</option>
                 <option value="php">php</option>
