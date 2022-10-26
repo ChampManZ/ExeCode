@@ -1,7 +1,7 @@
 function CoderunnerOutput() {
   return (
     <div>
-        <h3>Output</h3>
+        <h2>Output</h2>
     </div>
   )
 }

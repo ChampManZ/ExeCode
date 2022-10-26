@@ -7,7 +7,7 @@ function CoderunnerTestcase() {
 
     return (
         <div>
-            <h3>Test Case</h3>
+            <h2>Test Case</h2>
             <CoderunnerUploadForm />
         </div>
     )

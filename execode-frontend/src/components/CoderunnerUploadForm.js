@@ -28,8 +28,11 @@ function CoderunnerUploadForm() {
             <form>
                 { isUpload ? 
                 <div>
-                    <p>{ fileDetail.name }</p>
-                    <input type="submit" />
+                    <h5>Sure to upload this test case?</h5>
+                    <p>Name: { fileDetail.name }</p>
+                    <p>Type: { fileDetail.type }</p>
+                    <p>Size: { fileDetail.size } bytes</p>
+                    <input type="submit" style={uploadBtnStyle} />
                 </div> : 
                 <div>
                     <input type="file" id="codeFileUpload" name="codeFileName" onChange={fileHandler} hidden />
