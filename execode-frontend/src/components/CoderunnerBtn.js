@@ -1,11 +1,7 @@
 function CoderunnerBtn(props) {
-    const btnStyle = {
-        textAlign: "right"
-      }
-
     return (
-        <div style={btnStyle}>
-            <button type="button">{props.name}</button>
+        <div>
+            <button type="button" style={props.style} onClick={props.clickFunc} >{props.name}</button>
         </div>
     )
 }

@@ -1,14 +1,12 @@
-import { useState } from "react"
 import CoderunnerUploadForm from "./CoderunnerUploadForm"
+import CoderunnerUploadEditor from "./CoderunnerUploadEditor"
 
 function CoderunnerTestcase() {
-
-    const [testCase, setTestCase] = useState({})
-
     return (
         <div>
             <h2>Test Case</h2>
             <CoderunnerUploadForm />
+            <CoderunnerUploadEditor />
         </div>
     )
 }

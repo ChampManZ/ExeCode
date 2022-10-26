@@ -2,16 +2,13 @@ import { useState } from "react"
 
 function CoderunnerUploadForm() {
     // Didn't provide action path to backend yet. Don't forget to do it.
+    // Didn't do handle submission after POST to backend yet too.
     const [isUpload, setIsUpload] = useState(false)
     const [fileDetail, setFileDetail] = useState()
 
     const fileHandler = (event) => {
         setFileDetail(event.target.files[0])
         setIsUpload(true)
-    }
-
-    const handleSubmission = () => {
-
     }
 
     const uploadBtnStyle = {
