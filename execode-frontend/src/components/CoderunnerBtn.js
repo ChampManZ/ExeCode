@@ -1,13 +1,13 @@
-function CoderunnerRunBtn() {
+function CoderunnerBtn(props) {
     const btnStyle = {
         textAlign: "right"
       }
 
     return (
         <div style={btnStyle}>
-            <button type="button">Run</button>
+            <button type="button">{props.name}</button>
         </div>
     )
 }
 
-export default CoderunnerRunBtn
+export default CoderunnerBtn

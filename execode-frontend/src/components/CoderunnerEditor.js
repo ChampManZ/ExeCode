@@ -1,5 +1,5 @@
 import CodeMirror from '@uiw/react-codemirror'
-import CoderunnerRunBtn from './CoderunnerRunBtn'
+import CoderunnerBtn from './CoderunnerBtn'
 
 const exampleCode = "console.log('Hello, World');"
 
@@ -11,7 +11,7 @@ function CoderunnerEditor() {
             height="750px"
             width='750px'
         />
-        <CoderunnerRunBtn />
+        <CoderunnerBtn name="Run" />
     </div>
   )
 }

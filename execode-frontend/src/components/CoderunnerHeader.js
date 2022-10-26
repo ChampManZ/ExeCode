@@ -11,6 +11,8 @@ const CoderunnerHeader = () => {
         borderBottom: "1px solid #E5E5E5"
     };
 
+    // langOptions will be use to display dropdown available programming language
+    // Addition, we will use React Select library to enhance our code/workflow
     const langOptions = [
         { value: 'bash', label: 'Bash' },
         { value: 'c', label: 'C' },
