@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types'
 import CoderunnerInput from './CoderunnerInput';
+import Select from 'react-select';
 
 const CoderunnerHeader = (props) => {
+
     const codeRunnerHeadingStyle = {
         display: "flex",
         padding: "20px 20px",
@@ -9,33 +11,36 @@ const CoderunnerHeader = (props) => {
         justifyContent: "flex-start"
     };
 
+const langOptions = [
+    { value: 'bash', label: 'Bash' },
+    { value: 'c', label: 'C' },
+    { value: 'c++', label: 'C++' },
+    { value: 'csharp', label: 'C#' },
+    { value: 'dart', label: 'Dart' },
+    { value: 'go', label: 'Go' },
+    { value: 'java', label: 'Java' },
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'kotlin', label: 'Kotlin' },
+    { value: 'lua', label: 'Lua' },
+    { value: 'php', label: 'php' },
+    { value: 'python', label: 'Python3' },
+    { value: 'python2', label: 'Python2' },
+    { value: 'ruby', label: 'Ruby' },
+    { value: 'rust', label: 'Rust' },
+    { value: 'scala', label: 'Scala' },
+    { value: 'sqlite3', label: 'SQLite3' },
+    { value: 'swift', label: 'Swift' },
+    { value: 'typescript', label: 'TypeScript' },
+]
+
     return (
     <header style={codeRunnerHeadingStyle}>
         <CoderunnerInput />
-        <div>
+        <div id='lang-dropdown'>
             <label>Language: </label>
-            <select name="languages" id="languages">
-                <option value="bash">Bash</option>
-                <option value="c">C</option>
-                <option value="c++">C++</option>
-                <option value="csharp">C#</option>
-                <option value="dart">Dart</option>
-                <option value="go">Go</option>
-                <option value="java">Java</option>
-                <option value="javascript" selected>JavaScript</option>
-                <option value="kotlin">Kotlin</option>
-                <option value="lua">Lua</option>
-                <option value="php">php</option>
-                <option value="python">Python 3</option>
-                <option value="python2">Python 2</option>
-                <option value="ruby">Ruby</option>
-                <option value="rust">Rust</option>
-                <option value="scala">Scala</option>
-                <option value="sqlite3">SQLite3</option>
-                <option value="swift">Swift</option>
-                <option value="typescript">TypeScript</option>
-            </select>
+            <Select value={langOptions.value} options={langOptions} defaultValue={langOptions[7]} />
         </div>
+        <hr />
     </header>
   )
 }

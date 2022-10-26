@@ -1,5 +1,7 @@
 import CoderunnerHeader from "./CoderunnerHeader"
 import CoderunnerEditor from "./CoderunnerEditor"
+import CoderunnerOutput from "./CoderunnerOutput"
+import CoderunnerTestcase from "./CoderunnerTestcase"
 
 const flexboxStyle = {
   display: "flex",
@@ -11,9 +13,9 @@ function Coderunner() {
     <div>
         <CoderunnerHeader />
         <div style={flexboxStyle}>
-          <div></div>
+          <CoderunnerTestcase />
           <CoderunnerEditor />
-          <div></div>
+          <CoderunnerOutput />
         </div>
     </div>
   )
