@@ -14,7 +14,8 @@ const uploadBtnStyle = {
 }
 
 const divBtnStyle = {
-  textAlign: "right"
+  textAlign: "right",
+  padding: "10px 4px"
 }
 
 function CoderunnerEditor() {
@@ -36,7 +37,7 @@ function CoderunnerEditor() {
         <CodeMirror 
             value={code}
             height="750px"
-            width='750px'
+            width='auto'
             onChange={onChange}
         />
         <div style={divBtnStyle}>

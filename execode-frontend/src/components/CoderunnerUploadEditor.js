@@ -12,6 +12,10 @@ const uploadBtnStyle = {
     marginTop: "1rem"
 }
 
+const divPaddingStyle = {
+    padding: "20px 2px"
+}
+
 function CoderunnerUploadEditor() {
 
     const [isClick, setIsClick] = useState(false)
@@ -29,10 +33,10 @@ function CoderunnerUploadEditor() {
     return (
         <div>
             { isClick ? 
-            <div>
+            <div style={divPaddingStyle}>
                 <CodeMirror 
                 height="auto"
-                width='200px'
+                width='auto'
                 value={code}
                 onChange={onChange}
                 />
