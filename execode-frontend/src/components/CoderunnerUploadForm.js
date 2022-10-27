@@ -20,9 +20,27 @@ function CoderunnerUploadForm() {
         marginTop: "1rem"
     }
 
+    // Don't forget to add this
+    const fetchURL = ""
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData()
+        formData.append('title', fileDetail.name)
+        formData.append('filepath', fileDetail)
+        try {
+            let res = await fetch(fetchURL, {
+                method: "POST",
+                body: formData
+            })
+            console.log(res.json())
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     return (
         <div>
-            <form>
+            <form onSubmit={handleSubmit}>
                 { isUpload ? 
                 <div>
                     <h5>Sure to upload this test case?</h5>
