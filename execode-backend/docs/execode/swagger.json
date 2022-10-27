@@ -1,0 +1,206 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "API for Execode code learning environment",
+        "title": "Execode API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/": {
+            "get": {
+                "description": "get the status of server.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Show the status of server.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/main.healthCheck.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/execute": {
+            "post": {
+                "description": "Execute the code in the language specified in the POST request body.\nIf it is a submission task then save user submissions as well.",
+                "consumes": [
+                    "application/json",
+                    "text/xml"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Execute"
+                ],
+                "summary": "Execute code and handle user submissions.",
+                "parameters": [
+                    {
+                        "description": "Description of the job to be run",
+                        "name": "JobDescription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.ExecuteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.ExecuteResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/execute/runtimes": {
+            "get": {
+                "description": "Get all available language runtimes provided by the connected piston instance",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Execute"
+                ],
+                "summary": "List installed Piston runtimes.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.RuntimeResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.ExecuteRequest": {
+            "type": "object",
+            "properties": {
+                "args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "content": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stdin": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.ExecuteResponse": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/piston.ExecutionResult"
+                }
+            }
+        },
+        "api.RuntimeResponse": {
+            "type": "object",
+            "properties": {
+                "runtimes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/piston.Runtime"
+                    }
+                }
+            }
+        },
+        "main.healthCheck.response": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "piston.ExecutionResult": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
+                },
+                "run": {
+                    "$ref": "#/definitions/piston.JobOutput"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "piston.JobOutput": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "output": {
+                    "type": "integer"
+                },
+                "signal": {
+                    "type": "integer"
+                },
+                "stderr": {
+                    "type": "string"
+                },
+                "stdout": {
+                    "type": "string"
+                }
+            }
+        },
+        "piston.Runtime": {
+            "type": "object",
+            "properties": {
+                "aliases": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "language": {
+                    "type": "string"
+                },
+                "node": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

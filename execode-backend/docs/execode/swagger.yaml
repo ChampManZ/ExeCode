@@ -1,0 +1,137 @@
+basePath: /
+definitions:
+  api.ExecuteRequest:
+    properties:
+      args:
+        items:
+          type: string
+        type: array
+      content:
+        type: string
+      language:
+        type: string
+      name:
+        type: string
+      stdin:
+        type: string
+      version:
+        type: string
+    type: object
+  api.ExecuteResponse:
+    properties:
+      result:
+        $ref: '#/definitions/piston.ExecutionResult'
+    type: object
+  api.RuntimeResponse:
+    properties:
+      runtimes:
+        items:
+          $ref: '#/definitions/piston.Runtime'
+        type: array
+    type: object
+  main.healthCheck.response:
+    properties:
+      message:
+        type: string
+    type: object
+  piston.ExecutionResult:
+    properties:
+      language:
+        type: string
+      run:
+        $ref: '#/definitions/piston.JobOutput'
+      version:
+        type: string
+    type: object
+  piston.JobOutput:
+    properties:
+      code:
+        type: integer
+      output:
+        type: integer
+      signal:
+        type: integer
+      stderr:
+        type: string
+      stdout:
+        type: string
+    type: object
+  piston.Runtime:
+    properties:
+      aliases:
+        items:
+          type: string
+        type: array
+      language:
+        type: string
+      node:
+        type: string
+      version:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for Execode code learning environment
+  title: Execode API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.healthCheck.response'
+      summary: Show the status of server.
+      tags:
+      - Health
+  /execute:
+    post:
+      consumes:
+      - application/json
+      - text/xml
+      description: |-
+        Execute the code in the language specified in the POST request body.
+        If it is a submission task then save user submissions as well.
+      parameters:
+      - description: Description of the job to be run
+        in: body
+        name: JobDescription
+        required: true
+        schema:
+          $ref: '#/definitions/api.ExecuteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ExecuteResponse'
+      summary: Execute code and handle user submissions.
+      tags:
+      - Execute
+  /execute/runtimes:
+    get:
+      consumes:
+      - '*/*'
+      description: Get all available language runtimes provided by the connected piston
+        instance
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.RuntimeResponse'
+      summary: List installed Piston runtimes.
+      tags:
+      - Execute
+schemes:
+- http
+swagger: "2.0"
