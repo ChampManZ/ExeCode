@@ -35,8 +35,7 @@ func (client *Client) GetRuntimes() ([]Runtime, error) {
 	}
 
 	runtimes := []Runtime{}
-	err = json.Unmarshal(b, &runtimes)
-	if err != nil {
+	if err = json.Unmarshal(b, &runtimes); err != nil {
 		return nil, err
 	}
 
@@ -55,8 +54,7 @@ func (client *Client) GetInstalledPackages() ([]Package, error) {
 	}
 
 	pistonPackages := []Package{}
-	err = json.Unmarshal(b, &pistonPackages)
-	if err != nil {
+	if err = json.Unmarshal(b, &pistonPackages); err != nil {
 		return nil, err
 	}
 
@@ -95,6 +93,30 @@ func (client *Client) InstallPackage(p Package) error {
 	return nil
 }
 
+func (client *Client) Execute(task *ExecutionTask) (*ExecutionResult, error) {
+	b, err := json.Marshal(task)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.makeRequest("POST", "http://"+client.BaseURL+"/api/v2/execute", bytes.NewReader(b))
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	result := ExecutionResult{}
+	if err = json.Unmarshal(body, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
 func (client *Client) makeRequest(method string, url string, body io.Reader) (*http.Response, error) {
 	if body == nil {
 		body = &bytes.Reader{}
@@ -123,10 +145,10 @@ func (client *Client) makeRequest(method string, url string, body io.Reader) (*h
 	resp.Body.Close()
 	resp.Body = ioutil.NopCloser(bytes.NewBuffer(respBody))
 
-	// err = handleStatusCode(resp.StatusCode, string(respBody))
-	// if err != nil {
-	// 	return nil, err
-	// }
+	err = handleStatusCode(resp.StatusCode, string(respBody))
+	if err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }
