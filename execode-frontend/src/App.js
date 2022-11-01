@@ -1,4 +1,4 @@
-import Coderunner from "./components/Coderunner";
+import Coderunner from "./pages/Coderunner";
 
 function App() {
   return (
