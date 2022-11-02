@@ -2,9 +2,9 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sync"
 
 	"github.com/ChampManZ/ExeCode/v2/internal/piston"
 	"github.com/labstack/echo/v4"
@@ -56,36 +56,58 @@ func ExecuteHandler(c echo.Context) error {
 		return err
 	}
 
-	task := &piston.ExecutionTask{
-		Language:           executionRequest.Language,
-		Version:            executionRequest.Version,
-		Files:              []piston.JobFile{{Name: executionRequest.Name, Content: executionRequest.Content}},
-		Stdin:              executionRequest.Stdin,
-		Args:               executionRequest.Args,
-		RunTimeout:         0,
-		CompileTimeout:     0,
-		RunMemoryLimit:     0,
-		CompileMemoryLimit: 0,
+	respBody := new(ExecuteResponse)
+	respBody.Run = make([]piston.JobOutput, len(executionRequest.Inputs))
+	// result := new(piston.ExecutionResult)
+
+	var wg sync.WaitGroup
+	doRequest := func(task *piston.ExecutionTask, i int) error {
+		defer wg.Done()
+		result, err := pistonClient.Execute(task)
+		if err != nil {
+			return err
+		}
+		respBody.Run[i] = result.Run
+		return nil
 	}
 
-	result, err := pistonClient.Execute(task)
-	if err != nil {
-		return err
-	}
-	fmt.Println("reached")
+	for i, input := range executionRequest.Inputs {
+		task := &piston.ExecutionTask{
+			Language:           executionRequest.Language,
+			Version:            executionRequest.Version,
+			Files:              []piston.JobFile{{Name: executionRequest.Name, Content: executionRequest.Content}},
+			Stdin:              input.Stdin,
+			Args:               input.Args,
+			RunTimeout:         0,
+			CompileTimeout:     0,
+			RunMemoryLimit:     0,
+			CompileMemoryLimit: 0,
+		}
 
-	return c.JSON(http.StatusOK, ExecuteResponse{*result})
+		wg.Add(1)
+		go doRequest(task, i)
+	}
+
+	wg.Wait()
+
+	return c.JSON(http.StatusOK, respBody)
 }
 
 type ExecuteRequest struct {
-	Language string   `json:"language"`
-	Version  string   `json:"version"`
-	Name     string   `json:"name"`
-	Content  string   `json:"content"`
-	Stdin    string   `json:"stdin"`
-	Args     []string `json:"args"`
+	Language string  `json:"language"`
+	Version  string  `json:"version"`
+	Name     string  `json:"name"`
+	Content  string  `json:"content"`
+	Inputs   []Input `json:"inputs"`
+}
+
+type Input struct {
+	Stdin string   `json:"stdin"`
+	Args  []string `json:"args"`
 }
 
 type ExecuteResponse struct {
-	Result piston.ExecutionResult `json:"result"`
+	Run []piston.JobOutput `json:"run"`
+	// Language string             `json:"language"`
+	// Version  string             `json:"version"`
 }

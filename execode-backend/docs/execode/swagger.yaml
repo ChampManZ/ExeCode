@@ -2,25 +2,34 @@ basePath: /
 definitions:
   api.ExecuteRequest:
     properties:
-      args:
-        items:
-          type: string
-        type: array
       content:
         type: string
+      inputs:
+        items:
+          $ref: '#/definitions/api.Input'
+        type: array
       language:
         type: string
       name:
-        type: string
-      stdin:
         type: string
       version:
         type: string
     type: object
   api.ExecuteResponse:
     properties:
-      result:
-        $ref: '#/definitions/piston.ExecutionResult'
+      run:
+        items:
+          $ref: '#/definitions/piston.JobOutput'
+        type: array
+    type: object
+  api.Input:
+    properties:
+      args:
+        items:
+          type: string
+        type: array
+      stdin:
+        type: string
     type: object
   api.RuntimeResponse:
     properties:
@@ -34,21 +43,12 @@ definitions:
       message:
         type: string
     type: object
-  piston.ExecutionResult:
-    properties:
-      language:
-        type: string
-      run:
-        $ref: '#/definitions/piston.JobOutput'
-      version:
-        type: string
-    type: object
   piston.JobOutput:
     properties:
       code:
         type: integer
       output:
-        type: integer
+        type: string
       signal:
         type: integer
       stderr:
@@ -110,7 +110,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Describes the result of the execution
           schema:
             $ref: '#/definitions/api.ExecuteResponse'
       summary: Execute code and handle user submissions.

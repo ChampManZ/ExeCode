@@ -66,7 +66,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Describes the result of the execution",
                         "schema": {
                             "$ref": "#/definitions/api.ExecuteResponse"
                         }
@@ -102,22 +102,19 @@ const docTemplate = `{
         "api.ExecuteRequest": {
             "type": "object",
             "properties": {
-                "args": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "content": {
                     "type": "string"
+                },
+                "inputs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Input"
+                    }
                 },
                 "language": {
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "stdin": {
                     "type": "string"
                 },
                 "version": {
@@ -128,8 +125,25 @@ const docTemplate = `{
         "api.ExecuteResponse": {
             "type": "object",
             "properties": {
-                "result": {
-                    "$ref": "#/definitions/piston.ExecutionResult"
+                "run": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/piston.JobOutput"
+                    }
+                }
+            }
+        },
+        "api.Input": {
+            "type": "object",
+            "properties": {
+                "args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "stdin": {
+                    "type": "string"
                 }
             }
         },
@@ -152,20 +166,6 @@ const docTemplate = `{
                 }
             }
         },
-        "piston.ExecutionResult": {
-            "type": "object",
-            "properties": {
-                "language": {
-                    "type": "string"
-                },
-                "run": {
-                    "$ref": "#/definitions/piston.JobOutput"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
         "piston.JobOutput": {
             "type": "object",
             "properties": {
@@ -173,7 +173,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "output": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "signal": {
                     "type": "integer"
