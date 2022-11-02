@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -21,9 +22,9 @@ import (
 func RuntimeHandler(c echo.Context) error {
 	pistonClient := piston.NewClient(http.DefaultClient, "localhost:2000", "")
 
-	runtimes, err := pistonClient.GetRuntimes()
+	runtimes, statusCode, err := pistonClient.GetRuntimes()
 	if err != nil {
-		return err
+		return HandleErrorFromPiston(c, statusCode, err)
 	}
 
 	return c.JSON(http.StatusOK, RuntimeResponse{runtimes})
@@ -58,17 +59,21 @@ func ExecuteHandler(c echo.Context) error {
 
 	respBody := new(ExecuteResponse)
 	respBody.Run = make([]piston.JobOutput, len(executionRequest.Inputs))
+	respBody.Errors = make(map[string]pistonErrorResponse)
 	// result := new(piston.ExecutionResult)
 
 	var wg sync.WaitGroup
-	doRequest := func(task *piston.ExecutionTask, i int) error {
+	doRequest := func(task *piston.ExecutionTask, i int) {
 		defer wg.Done()
-		result, err := pistonClient.Execute(task)
+		result, statusCode, err := pistonClient.Execute(task)
 		if err != nil {
-			return err
+			if statusCode == -1 {
+				statusCode = http.StatusInternalServerError
+			}
+			respBody.Errors[fmt.Sprint(i)] = pistonErrorResponse{statusCode, err.Error()}
+			return
 		}
 		respBody.Run[i] = result.Run
-		return nil
 	}
 
 	for i, input := range executionRequest.Inputs {
@@ -107,7 +112,13 @@ type Input struct {
 }
 
 type ExecuteResponse struct {
-	Run []piston.JobOutput `json:"run"`
+	Run    []piston.JobOutput             `json:"run"`
+	Errors map[string]pistonErrorResponse `json:"errors,omitempty"`
 	// Language string             `json:"language"`
 	// Version  string             `json:"version"`
+}
+
+type pistonErrorResponse struct {
+	StatusCode   int    `json:"status_code"`
+	ErrorMessage string `json:"message"`
 }

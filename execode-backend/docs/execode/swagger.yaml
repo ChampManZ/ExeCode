@@ -17,6 +17,10 @@ definitions:
     type: object
   api.ExecuteResponse:
     properties:
+      errors:
+        additionalProperties:
+          $ref: '#/definitions/api.pistonErrorResponse'
+        type: object
       run:
         items:
           $ref: '#/definitions/piston.JobOutput'
@@ -38,6 +42,13 @@ definitions:
           $ref: '#/definitions/piston.Runtime'
         type: array
     type: object
+  api.pistonErrorResponse:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
   main.healthCheck.response:
     properties:
       message:
@@ -50,7 +61,7 @@ definitions:
       output:
         type: string
       signal:
-        type: integer
+        type: string
       stderr:
         type: string
       stdout:

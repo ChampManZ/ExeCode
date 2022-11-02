@@ -3,6 +3,7 @@ package piston
 import (
 	"bufio"
 	"fmt"
+	"net/http"
 	"os"
 	"sort"
 	"strings"
@@ -51,49 +52,49 @@ func ReadPackageFile(path string) ([]Package, error) {
 	return pistonPackages, nil
 }
 
-func EnsurePackagesFromFile(path string, pistonClient *Client) error {
+func EnsurePackagesFromFile(path string, pistonClient *Client) (int, error) {
 
 	type Result struct {
 		PistonPackages []Package
+		StatusCode     int
 		Err            error
 	}
 	c := make(chan Result)
 	go func() {
-		pistonPackages, err := pistonClient.GetInstalledPackages()
-		c <- Result{PistonPackages: pistonPackages, Err: err}
+		pistonPackages, statusCode, err := pistonClient.GetInstalledPackages()
+		c <- Result{PistonPackages: pistonPackages, StatusCode: statusCode, Err: err}
 	}()
 
 	requiredPackages, err := ReadPackageFile(path)
 	if err != nil {
-		return err
+		return -1, err
 	}
 	result := <-c
 	if result.Err != nil {
-		return result.Err
+		return result.StatusCode, result.Err
 	}
 	installedPackages := result.PistonPackages
 
 	sort.Sort(byLanguage(requiredPackages))
 	sort.Sort(byLanguage(installedPackages))
 	if utils.ArrayEqual(requiredPackages, installedPackages) {
-		return nil
+		return -1, nil
 	}
 
 	min := 0
 	for _, pp := range requiredPackages {
 		i := utils.InArray(pp, installedPackages[min:])
 		if i == -1 {
-			// TODO: Install piston package here
 			fmt.Println("Missing package: ", pp)
 			fmt.Println("installing...")
 			err := pistonClient.InstallPackage(pp)
 			if err != nil {
-				return err
+				return -1, err
 			}
 		} else {
 			min = i
 			fmt.Println("Found package: ", pp)
 		}
 	}
-	return nil
+	return http.StatusOK, nil
 }

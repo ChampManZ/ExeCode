@@ -23,42 +23,42 @@ func NewClient(client *http.Client, baseURL string, apiKey string) *Client {
 	}
 }
 
-func (client *Client) GetRuntimes() ([]Runtime, error) {
-	resp, err := client.makeRequest("GET", "http://"+client.BaseURL+"/api/v2/runtimes", nil)
+func (client *Client) GetRuntimes() ([]Runtime, int, error) {
+	resp, statusCode, err := client.makeRequest("GET", "http://"+client.BaseURL+"/api/v2/runtimes", nil)
 	if err != nil {
-		return nil, err
+		return nil, statusCode, err
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
 	runtimes := []Runtime{}
 	if err = json.Unmarshal(b, &runtimes); err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	return runtimes, nil
+	return runtimes, http.StatusOK, nil
 }
 
-func (client *Client) GetInstalledPackages() ([]Package, error) {
-	resp, err := client.makeRequest("GET", "http://"+client.BaseURL+"/api/v2/runtimes", nil)
+func (client *Client) GetInstalledPackages() ([]Package, int, error) {
+	resp, statusCode, err := client.makeRequest("GET", "http://"+client.BaseURL+"/api/v2/runtimes", nil)
 	if err != nil {
-		return nil, err
+		return nil, statusCode, err
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
 	pistonPackages := []Package{}
 	if err = json.Unmarshal(b, &pistonPackages); err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	return pistonPackages, nil
+	return pistonPackages, http.StatusOK, nil
 }
 
 func (client *Client) InstallPackage(p Package) error {
@@ -68,7 +68,7 @@ func (client *Client) InstallPackage(p Package) error {
 	}
 
 	reader := bytes.NewReader(b)
-	resp, err := client.makeRequest("POST", "http://"+client.BaseURL+"/api/v2/packages", reader)
+	resp, _, err := client.makeRequest("POST", "http://"+client.BaseURL+"/api/v2/packages", reader)
 	if err != nil {
 		return err
 	}
@@ -93,38 +93,38 @@ func (client *Client) InstallPackage(p Package) error {
 	return nil
 }
 
-func (client *Client) Execute(task *ExecutionTask) (*ExecutionResult, error) {
+func (client *Client) Execute(task *ExecutionTask) (*ExecutionResult, int, error) {
 	b, err := json.Marshal(task)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	resp, err := client.makeRequest("POST", "http://"+client.BaseURL+"/api/v2/execute", bytes.NewReader(b))
+	resp, statusCode, err := client.makeRequest("POST", "http://"+client.BaseURL+"/api/v2/execute", bytes.NewReader(b))
 	if err != nil {
-		return nil, err
+		return nil, statusCode, err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
 	result := ExecutionResult{}
 	if err = json.Unmarshal(body, &result); err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	return &result, nil
+	return &result, http.StatusOK, nil
 }
 
-func (client *Client) makeRequest(method string, url string, body io.Reader) (*http.Response, error) {
+func (client *Client) makeRequest(method string, url string, body io.Reader) (*http.Response, int, error) {
 	if body == nil {
 		body = &bytes.Reader{}
 	}
 
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
@@ -134,12 +134,12 @@ func (client *Client) makeRequest(method string, url string, body io.Reader) (*h
 
 	resp, err := client.HttpClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, resp.StatusCode, err
 	}
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
 	resp.Body.Close()
@@ -147,10 +147,10 @@ func (client *Client) makeRequest(method string, url string, body io.Reader) (*h
 
 	err = handleStatusCode(resp.StatusCode, string(respBody))
 	if err != nil {
-		return nil, err
+		return nil, resp.StatusCode, err
 	}
 
-	return resp, nil
+	return resp, http.StatusOK, nil
 }
 
 func handleStatusCode(code int, respBody string) error {

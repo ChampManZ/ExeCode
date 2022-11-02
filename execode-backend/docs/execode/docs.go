@@ -125,6 +125,12 @@ const docTemplate = `{
         "api.ExecuteResponse": {
             "type": "object",
             "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/api.pistonErrorResponse"
+                    }
+                },
                 "run": {
                     "type": "array",
                     "items": {
@@ -158,6 +164,17 @@ const docTemplate = `{
                 }
             }
         },
+        "api.pistonErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
         "main.healthCheck.response": {
             "type": "object",
             "properties": {
@@ -176,7 +193,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "signal": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "stderr": {
                     "type": "string"

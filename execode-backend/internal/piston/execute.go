@@ -19,11 +19,11 @@ type ExecutionResult struct {
 }
 
 type JobOutput struct {
-	Stdout string `json:"stdout"`
-	Stderr string `json:"stderr"`
-	Code   *int   `json:"code"`
-	Signal *int   `json:"signal"`
-	Output string `json:"output"`
+	Stdout string  `json:"stdout"`
+	Stderr string  `json:"stderr"`
+	Code   *int    `json:"code"`
+	Signal *string `json:"signal"`
+	Output string  `json:"output"`
 }
 
 type JobFile struct {
