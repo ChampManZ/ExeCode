@@ -53,7 +53,6 @@ func ReadPackageFile(path string) ([]Package, error) {
 }
 
 func EnsurePackagesFromFile(path string, pistonClient *Client) (int, error) {
-
 	type Result struct {
 		PistonPackages []Package
 		StatusCode     int
@@ -78,7 +77,8 @@ func EnsurePackagesFromFile(path string, pistonClient *Client) (int, error) {
 	sort.Sort(byLanguage(requiredPackages))
 	sort.Sort(byLanguage(installedPackages))
 	if utils.ArrayEqual(requiredPackages, installedPackages) {
-		return -1, nil
+		// TODO: Fix error handling for piston responses
+		return http.StatusOK, nil
 	}
 
 	min := 0
