@@ -130,17 +130,18 @@ export default function PersistentDrawerLeft() {
         <List>
           {/* home */}
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton href="/Home">
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
+              {/* <a href='/home'>Home</a> */}
               <ListItemText primary="Home" />
             </ListItemButton>
           </ListItem>
 
           {/* courses */}
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton href="/Courses">
               <ListItemIcon>
                 <BackpackIcon />
               </ListItemIcon>
