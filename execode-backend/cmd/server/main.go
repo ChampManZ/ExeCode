@@ -9,6 +9,7 @@ import (
 	"time"
 
 	_ "github.com/ChampManZ/ExeCode/v2/docs/execode"
+	"github.com/ChampManZ/ExeCode/v2/entities"
 	"github.com/ChampManZ/ExeCode/v2/internal/api"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -23,6 +24,19 @@ import (
 // @BasePath /
 // @schemes  http
 func main() {
+	// Database init
+	err := entities.InitPostgresQL("localhost", "postgres", "admin", "postgres", 5432)
+	if err != nil {
+		log.Fatalf("failed to initialize database: %v", err)
+	}
+
+	err = entities.AutoMigrate()
+	if err != nil {
+		log.Fatalf("failed to migrate database: %v", err)
+	}
+
+	fmt.Println("Database initialized")
+
 	// Setup
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)

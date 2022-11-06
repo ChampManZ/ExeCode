@@ -21,4 +21,4 @@
 go.work
 
 # Ignore piston's docker volume mount
-data/piston/
+_data/piston/

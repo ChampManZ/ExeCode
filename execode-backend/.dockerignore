@@ -1,0 +1,8 @@
+# Whitelisting
+*
+
+!cmd/server/*
+!internal/*
+!docs/*
+# Go module files
+!go.*
