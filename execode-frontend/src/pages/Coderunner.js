@@ -1,7 +1,7 @@
-import CoderunnerHeader from "../components/CoderunnerHeader"
-import CoderunnerEditor from "../components/CoderunnerEditor"
-import CoderunnerOutput from "../components/CoderunnerOutput"
-import CoderunnerTestcase from "../components/CoderunnerTestcase"
+import CoderunnerHeader from "../components/CodeRunner/CoderunnerHeader"
+import CoderunnerEditor from "../components/CodeRunner/CoderunnerEditor"
+import CoderunnerOutput from "../components/CodeRunner/CoderunnerOutput"
+import CoderunnerTestcase from "../components/CodeRunner/CoderunnerTestcase"
 import Split from "react-split"
 import "../styles/splitter.css"
 

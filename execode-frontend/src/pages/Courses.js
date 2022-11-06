@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar"
 import Box from '@mui/material/Box';
 import { Typography, } from "@mui/material";
 import { ThemeProvider, useTheme } from "@emotion/react";
+import theme from "../components/theme";
 
 function Courses () {
     return (

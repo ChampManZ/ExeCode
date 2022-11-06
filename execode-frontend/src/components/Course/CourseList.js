@@ -9,8 +9,8 @@ import { CardActionArea } from '@mui/material';
 export default function Course() {
   return (
     <>
-    <Grid container columnSpacing={3} rowSpacing={3}>
-      <Grid item sm={6} md={3}>
+    <Grid container columnSpacing={5} rowSpacing={3}>
+      <Grid item sm={6} md={4} lg={3}>
         <Card sx={{ maxWidth: 345 }}>
           <CardActionArea>
             <CardMedia
@@ -31,7 +31,7 @@ export default function Course() {
         </Card>
       </Grid>
 
-      <Grid item sm={6} md={3}>
+      <Grid item sm={6} md={4} lg={3}>
         <Card sx={{ maxWidth: 345 }}>
           <CardActionArea>
             <CardMedia
@@ -52,7 +52,7 @@ export default function Course() {
         </Card>
       </Grid>
 
-      <Grid item sm={6} md={3}>
+      <Grid item sm={6} md={4} lg={3}>
         <Card sx={{ maxWidth: 345 }}>
           <CardActionArea>
             <CardMedia
@@ -73,7 +73,7 @@ export default function Course() {
         </Card>
       </Grid>
 
-      <Grid item sm={6} md={3}>
+      <Grid item sm={6} md={4} lg={3}>
         <Card sx={{ maxWidth: 345 }}>
           <CardActionArea>
             <CardMedia
@@ -94,7 +94,7 @@ export default function Course() {
         </Card>
       </Grid>
 
-      <Grid item sm={6} md={3}>
+      <Grid item sm={6} md={4} lg={3}>
         <Card sx={{ maxWidth: 345 }}>
           <CardActionArea>
             <CardMedia
