@@ -4,5 +4,6 @@
 !cmd/server/*
 !internal/*
 !docs/*
+!entities/*
 # Go module files
 !go.*

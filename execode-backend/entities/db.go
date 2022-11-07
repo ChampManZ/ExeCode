@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-var DB *gorm.DB
+var db *gorm.DB
 
 func InitPostgresQL(host string, user string, pw string, dbname string, port int) error {
 	var err error
@@ -22,7 +22,7 @@ func InitPostgresQL(host string, user string, pw string, dbname string, port int
 			TablePrefix: "execode.",
 		},
 	}
-	DB, err = gorm.Open(postgres.Open(dsn), &config)
+	db, err = gorm.Open(postgres.Open(dsn), &config)
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func InitPostgresQL(host string, user string, pw string, dbname string, port int
 }
 
 func AutoMigrate() error {
-	err := DB.AutoMigrate(
+	err := db.AutoMigrate(
 		&models.User{},
 		&models.Class{},
 		&models.Lecture{},
@@ -40,8 +40,8 @@ func AutoMigrate() error {
 		&models.ProblemContent{},
 		&models.TestCase{},
 	)
-	if DB.Error != nil {
-		return DB.Error
+	if db.Error != nil {
+		return db.Error
 	}
 	return err
 }

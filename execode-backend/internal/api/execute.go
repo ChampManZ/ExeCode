@@ -19,8 +19,12 @@ import (
 // @Produce     json
 // @Success     200 {object} RuntimeResponse
 // @Router      /execute/runtimes [get]
-func RuntimeHandler(c echo.Context) error {
-	pistonClient := piston.NewClient(http.DefaultClient, "localhost:2000", "")
+func (env Env) RuntimeHandler(c echo.Context) error {
+	pistonClient := piston.NewClient(
+		http.DefaultClient,
+		fmt.Sprintf("%v:%d", env.PistonHost, env.PistonPort),
+		env.PistonAPIKey,
+	)
 
 	runtimes, statusCode, err := pistonClient.GetRuntimes()
 	if err != nil {
@@ -44,8 +48,12 @@ type RuntimeResponse struct {
 // @Param       JobDescription body     ExecuteRequest  true "Description of the job to be run"
 // @Success     200            {object} ExecuteResponse "Describes the result of the execution"
 // @Router      /execute [post]
-func ExecuteHandler(c echo.Context) error {
-	pistonClient := piston.NewClient(http.DefaultClient, "localhost:2000", "")
+func (env Env) ExecuteHandler(c echo.Context) error {
+	pistonClient := piston.NewClient(
+		http.DefaultClient,
+		fmt.Sprintf("%v:%d", env.PistonHost, env.PistonPort),
+		env.PistonAPIKey,
+	)
 
 	b, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {

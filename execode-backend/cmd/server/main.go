@@ -24,8 +24,16 @@ import (
 // @BasePath /
 // @schemes  http
 func main() {
+	// Environment init
+	env, err := api.GetEnv()
+	if err != nil {
+		log.Fatalf("failed to initialize environment variables: %v", err)
+	}
+
+	fmt.Println("Environment initialized...")
+
 	// Database init
-	err := entities.InitPostgresQL("localhost", "postgres", "admin", "postgres", 5432)
+	err = entities.InitPostgresQL(env.PostgresURL, env.DatabaseUser, env.DatabasePassword, env.DatabaseName, env.PostgresPort)
 	if err != nil {
 		log.Fatalf("failed to initialize database: %v", err)
 	}
@@ -35,19 +43,21 @@ func main() {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 
-	fmt.Println("Database initialized")
+	fmt.Println("Database initialized...")
+	fmt.Println("Starting server...")
 
 	// Setup
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
-	e.GET("/execute/runtimes", api.RuntimeHandler)
-	e.POST("/execute", api.ExecuteHandler)
+	e.GET("/execute/runtimes", env.RuntimeHandler)
+	e.POST("/execute", env.ExecuteHandler)
 
 	e.GET("/", healthCheck)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
+	bindTo := fmt.Sprintf("%v:%d", env.BindURL, env.BindPort)
 	go func() {
-		if err := e.Start(":8080"); err != nil && err != http.ErrServerClosed {
+		if err := e.Start(bindTo); err != nil && err != http.ErrServerClosed {
 			e.Logger.Fatal("shutting down the server")
 		}
 	}()

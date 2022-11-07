@@ -22,3 +22,6 @@ go.work
 
 # Ignore piston's docker volume mount
 _data/piston/
+
+# Local scripts
+_local/
