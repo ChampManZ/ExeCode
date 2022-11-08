@@ -160,7 +160,7 @@ export default function PersistentDrawerLeft() {
 
           {/* code runner */}
           <ListItem disablePadding>
-            <ListItemButton href="/coderunplayground">
+            <ListItemButton href="/coderunplayground" target="_blank">
               <ListItemIcon>
                 <CodeIcon />
               </ListItemIcon>
