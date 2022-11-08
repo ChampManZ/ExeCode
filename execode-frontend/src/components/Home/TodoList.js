@@ -35,10 +35,10 @@ function createData(course, task, duedate) {
 
 const rows = [
   createData('Fundamental of Programming', 'Complete Module 6', Date()),
-  createData('Fundamental of Programming', 'Complete Module 6', Date()),
-  createData('Fundamental of Programming', 'Complete Module 6', Date()),
-  createData('Fundamental of Programming', 'Complete Module 6', Date()),
-  createData('Fundamental of Programming', 'Complete Module 6', Date()),
+  createData('Cyber-Physical System', 'Complete Module 6', Date()),
+  createData('Computer System', 'Complete Module 6', Date()),
+  createData('Discrete Mathematics', 'Complete Module 6', Date()),
+  createData('Database Technology', 'Complete Module 6', Date()),
 ];
 
 export default function CustomizedTables() {

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { styled, useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
-import {Routes, Route, useNavigate} from 'react-router-dom';
+import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import BackpackIcon from '@mui/icons-material/Backpack';
 import CodeIcon from '@mui/icons-material/Code';
-import Courses from '../pages/Courses';
+// import Courses from '../pages/Courses';
 
 
 const drawerWidth = 240;
@@ -139,7 +138,7 @@ export default function PersistentDrawerLeft() {
         <List>
           {/* home */}
           <ListItem disablePadding>
-            <ListItemButton href="/Home">
+            <ListItemButton href="/">
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
@@ -151,7 +150,7 @@ export default function PersistentDrawerLeft() {
           {/* courses */}
           <ListItem disablePadding>
             {/* <ListItemButton onClick={navigateToCourse}> */}
-            <ListItemButton href="/Courses">
+            <ListItemButton href="/courses">
               <ListItemIcon>
                 <BackpackIcon />
               </ListItemIcon>
@@ -161,7 +160,7 @@ export default function PersistentDrawerLeft() {
 
           {/* code runner */}
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton href="/coderunplayground">
               <ListItemIcon>
                 <CodeIcon />
               </ListItemIcon>
