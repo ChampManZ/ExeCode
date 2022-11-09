@@ -10,8 +10,8 @@ const (
 	EnvBindPort = "BIND_PORT"
 	EnvBindURL  = "BIND_URL"
 
-	EnvPosgresURL       = "POSTGRES_HOST"
-	EnvPosgresPort      = "POSTGRES_PORT"
+	EnvPostgresURL      = "POSTGRES_HOST"
+	EnvPostgresPort     = "POSTGRES_PORT"
 	EnvDatabaseName     = "DATABASE_NAME"
 	EnvDatabaseUser     = "DATABASE_USER"
 	EnvDatabasePassword = "DATABASE_PASS"
@@ -51,17 +51,17 @@ func GetEnv() (Env, error) {
 
 	bindURL := os.Getenv(EnvBindURL) // Can be empty
 
-	postgresURL := os.Getenv(EnvPosgresURL)
+	postgresURL := os.Getenv(EnvPostgresURL)
 	if postgresURL == "" {
 		postgresURL = "localhost"
 	}
 
-	envPostgresPort := os.Getenv(EnvPosgresPort)
+	envPostgresPort := os.Getenv(EnvPostgresPort)
 	var postgresPort int
 	if envPostgresPort == "" {
 		postgresPort = 5432
 	} else if portNo, err := strconv.Atoi(envPostgresPort); err == nil {
-		bindPort = portNo
+		postgresPort = portNo
 	} else {
 		return Env{}, fmt.Errorf("failed to get postgres port: %v", err)
 	}

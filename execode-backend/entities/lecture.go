@@ -1,10 +1,17 @@
-package models
+package entities
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Lecture struct {
-	gorm.Model
-	ClassID            int `gorm:"not null"`
+	ID                 uint `gorm:"primaryKey"`
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
+	DeletedAt          gorm.DeletedAt `gorm:"index" swaggertype:"string"`
+	ClassID            int            `gorm:"not null"`
 	Class              Class
 	LectureName        string `gorm:"size:60;not null;index"`
 	LectureDescription string `gorm:"size:500"`

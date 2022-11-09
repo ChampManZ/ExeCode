@@ -24,9 +24,9 @@ type JobOutput struct {
 	Code   *int    `json:"code"`
 	Signal *string `json:"signal"`
 	Output string  `json:"output"`
-}
+} // @name ExecutionResult
 
 type JobFile struct {
 	Name    string `json:"name"`
 	Content string `json:"content"`
-}
+} // @name File

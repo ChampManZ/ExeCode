@@ -3,7 +3,6 @@ package entities
 import (
 	"fmt"
 
-	"github.com/ChampManZ/ExeCode/v2/entities/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -32,13 +31,13 @@ func InitPostgresQL(host string, user string, pw string, dbname string, port int
 
 func AutoMigrate() error {
 	err := db.AutoMigrate(
-		&models.User{},
-		&models.Class{},
-		&models.Lecture{},
-		&models.Problem{},
-		&models.LectureContent{},
-		&models.ProblemContent{},
-		&models.TestCase{},
+		&User{},
+		&Class{},
+		&Lecture{},
+		&Problem{},
+		&LectureContent{},
+		&ProblemContent{},
+		&TestCase{},
 	)
 	if db.Error != nil {
 		return db.Error

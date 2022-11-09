@@ -36,7 +36,7 @@ func (env Env) RuntimeHandler(c echo.Context) error {
 
 type RuntimeResponse struct {
 	Runtimes []piston.Runtime `json:"runtimes"`
-}
+} // @name PistonRuntimeList
 
 // ExecuteHandler godoc
 // @Summary     Execute code and handle user submissions.
@@ -45,8 +45,8 @@ type RuntimeResponse struct {
 // @Tags        Execute
 // @Accept      application/json,text/xml
 // @Produce     json
-// @Param       JobDescription body     ExecuteRequest  true "Description of the job to be run"
-// @Success     200            {object} ExecuteResponse "Describes the result of the execution"
+// @Param       JobDescription body     api.ExecuteHandler.request  true "Description of the job to be run"
+// @Success     200            {object} api.ExecuteHandler.response "Describes the result of the execution"
 // @Router      /execute [post]
 func (env Env) ExecuteHandler(c echo.Context) error {
 	pistonClient := piston.NewClient(
@@ -60,12 +60,25 @@ func (env Env) ExecuteHandler(c echo.Context) error {
 		return err
 	}
 
-	executionRequest := new(ExecuteRequest)
+	type request struct {
+		Language string  `json:"language"`
+		Version  string  `json:"version"`
+		Name     string  `json:"name"`
+		Content  string  `json:"content"`
+		Inputs   []input `json:"inputs"`
+	} // @name ExecutionRequest
+	executionRequest := new(request)
 	if err = json.Unmarshal(b, &executionRequest); err != nil {
 		return err
 	}
 
-	respBody := new(ExecuteResponse)
+	type response struct {
+		Run    []piston.JobOutput             `json:"run"`
+		Errors map[string]pistonErrorResponse `json:"errors,omitempty"`
+		// Language string             `json:"language"`
+		// Version  string             `json:"version"`
+	} // @name ExecutionResults
+	respBody := new(response)
 	respBody.Run = make([]piston.JobOutput, len(executionRequest.Inputs))
 	respBody.Errors = make(map[string]pistonErrorResponse)
 	// result := new(piston.ExecutionResult)
@@ -106,27 +119,11 @@ func (env Env) ExecuteHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, respBody)
 }
 
-type ExecuteRequest struct {
-	Language string  `json:"language"`
-	Version  string  `json:"version"`
-	Name     string  `json:"name"`
-	Content  string  `json:"content"`
-	Inputs   []Input `json:"inputs"`
-}
-
-type Input struct {
+type input struct {
 	Stdin string   `json:"stdin"`
 	Args  []string `json:"args"`
-}
-
-type ExecuteResponse struct {
-	Run    []piston.JobOutput             `json:"run"`
-	Errors map[string]pistonErrorResponse `json:"errors,omitempty"`
-	// Language string             `json:"language"`
-	// Version  string             `json:"version"`
-}
-
+} // @name ExecutionInput
 type pistonErrorResponse struct {
 	StatusCode   int    `json:"status_code"`
 	ErrorMessage string `json:"message"`
-}
+} // @name PistonError

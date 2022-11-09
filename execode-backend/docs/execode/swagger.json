@@ -56,7 +56,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.ExecuteRequest"
+                            "$ref": "#/definitions/ExecutionRequest"
                         }
                     }
                 ],
@@ -64,7 +64,7 @@
                     "200": {
                         "description": "Describes the result of the execution",
                         "schema": {
-                            "$ref": "#/definitions/api.ExecuteResponse"
+                            "$ref": "#/definitions/ExecutionResults"
                         }
                     }
                 }
@@ -87,7 +87,95 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.RuntimeResponse"
+                            "$ref": "#/definitions/PistonRuntimeList"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Gets all users, set page size and page number through query parameters.\nDefaults to page size = 10 and page = 1",
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Gets all users (paged)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page size to return",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page to return",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the result of the execution",
+                        "schema": {
+                            "$ref": "#/definitions/UsersList"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates the user defined by the request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Creates the user defined by the request",
+                "parameters": [
+                    {
+                        "description": "Description of the user to created",
+                        "name": "UserDescription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the created user",
+                        "schema": {
+                            "$ref": "#/definitions/CreateUserResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{username}": {
+            "get": {
+                "description": "Gets all users, set page size and page number through query parameters.\nDefaults to page size = 10 and page = 1",
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Gets all users (paged)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username to query",
+                        "name": "username",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the result of the execution",
+                        "schema": {
+                            "$ref": "#/definitions/UserResult"
                         }
                     }
                 }
@@ -95,47 +183,64 @@
         }
     },
     "definitions": {
-        "api.ExecuteRequest": {
+        "ClassFields": {
             "type": "object",
             "properties": {
-                "content": {
+                "classDescription": {
                     "type": "string"
                 },
-                "inputs": {
+                "className": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/api.Input"
-                    }
-                },
-                "language": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.ExecuteResponse": {
-            "type": "object",
-            "properties": {
-                "errors": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/api.pistonErrorResponse"
-                    }
-                },
-                "run": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/piston.JobOutput"
+                        "$ref": "#/definitions/UserFields"
                     }
                 }
             }
         },
-        "api.Input": {
+        "CreateUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "CreateUserResult": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/UserBasic"
+                }
+            }
+        },
+        "ExecutionInput": {
             "type": "object",
             "properties": {
                 "args": {
@@ -149,37 +254,30 @@
                 }
             }
         },
-        "api.RuntimeResponse": {
+        "ExecutionRequest": {
             "type": "object",
             "properties": {
-                "runtimes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/piston.Runtime"
-                    }
-                }
-            }
-        },
-        "api.pistonErrorResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
+                "content": {
                     "type": "string"
                 },
-                "status_code": {
-                    "type": "integer"
-                }
-            }
-        },
-        "main.healthCheck.response": {
-            "type": "object",
-            "properties": {
-                "message": {
+                "inputs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ExecutionInput"
+                    }
+                },
+                "language": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "version": {
                     "type": "string"
                 }
             }
         },
-        "piston.JobOutput": {
+        "ExecutionResult": {
             "type": "object",
             "properties": {
                 "code": {
@@ -199,7 +297,35 @@
                 }
             }
         },
-        "piston.Runtime": {
+        "ExecutionResults": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/PistonError"
+                    }
+                },
+                "run": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ExecutionResult"
+                    }
+                }
+            }
+        },
+        "PistonError": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "PistonRuntime": {
             "type": "object",
             "properties": {
                 "aliases": {
@@ -215,6 +341,137 @@
                     "type": "string"
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "PistonRuntimeList": {
+            "type": "object",
+            "properties": {
+                "runtimes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/PistonRuntime"
+                    }
+                }
+            }
+        },
+        "UserAdvanced": {
+            "type": "object",
+            "properties": {
+                "classes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ClassFields"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "UserBasic": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "UserFields": {
+            "type": "object",
+            "properties": {
+                "class": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ClassFields"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
+        "UserResult": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/UserAdvanced"
+                }
+            }
+        },
+        "UsersList": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserBasic"
+                    }
+                }
+            }
+        },
+        "main.healthCheck.response": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }

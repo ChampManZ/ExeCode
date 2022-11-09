@@ -12,6 +12,18 @@ services:
       - 5432:5432
     # volumes:
     #   - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+  execode:
+    image: 63011171/execode
+    container_name: execode_api
+    environment:
+      - POSTGRES_HOST=db
+      - DATABASE_NAME=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASS=admin
+      - PISTON_HOST=piston
+      - PISTON_PORT=2000
+    ports:
+      - 3000:3000
   piston:
     image: ghcr.io/engineer-man/piston
     container_name: piston_api

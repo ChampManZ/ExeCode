@@ -5,4 +5,4 @@ type Runtime struct {
 	Version  string   `json:"version"`
 	Aliases  []string `json:"aliases"`
 	Runtime  string   `json:"node"`
-}
+} // @name PistonRuntime

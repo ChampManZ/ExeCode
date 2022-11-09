@@ -26,17 +26,17 @@ func NewClient(client *http.Client, baseURL string, apiKey string) *Client {
 func (client *Client) GetRuntimes() ([]Runtime, int, error) {
 	resp, statusCode, err := client.makeRequest("GET", "http://"+client.BaseURL+"/api/v2/runtimes", nil)
 	if err != nil {
-		return nil, statusCode, err
+		return []Runtime{}, statusCode, err
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, -1, err
+		return []Runtime{}, -1, err
 	}
 
 	runtimes := []Runtime{}
 	if err = json.Unmarshal(b, &runtimes); err != nil {
-		return nil, -1, err
+		return []Runtime{}, -1, err
 	}
 
 	return runtimes, http.StatusOK, nil

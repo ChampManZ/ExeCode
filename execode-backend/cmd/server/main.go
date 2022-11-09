@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "database/sql"
 	"fmt"
 	"net/http"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
+	_ "gorm.io/gorm"
 )
 
 // @title       Execode API
@@ -49,9 +51,17 @@ func main() {
 	// Setup
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
+
+	// Execute apis
 	e.GET("/execute/runtimes", env.RuntimeHandler)
 	e.POST("/execute", env.ExecuteHandler)
 
+	// CRUD apis
+	e.POST("/users", api.CreateUserHandler)
+	e.GET("/users", api.GetUsersHandler)
+	e.GET("/users/:username", api.GetUserHandler)
+
+	// Utils
 	e.GET("/", healthCheck)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 

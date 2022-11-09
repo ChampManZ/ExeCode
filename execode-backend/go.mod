@@ -7,6 +7,7 @@ require (
 	github.com/labstack/gommon v0.4.0
 	github.com/swaggo/echo-swagger v1.3.5
 	github.com/swaggo/swag v1.8.7
+	golang.org/x/crypto v0.1.0
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.1
 )
@@ -36,7 +37,6 @@ require (
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.4.0 // indirect

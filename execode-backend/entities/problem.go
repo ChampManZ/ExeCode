@@ -1,10 +1,17 @@
-package models
+package entities
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Problem struct {
-	gorm.Model
-	ClassID        int `gorm:"not null"`
+	ID             uint `gorm:"primaryKey"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      gorm.DeletedAt `gorm:"index" swaggertype:"string"`
+	ClassID        int            `gorm:"not null"`
 	Class          Class
 	ProblemName    string `gorm:"size:80;not null"`
 	ProblemContent ProblemContent

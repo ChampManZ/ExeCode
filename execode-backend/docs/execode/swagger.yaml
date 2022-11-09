@@ -1,32 +1,43 @@
 basePath: /
 definitions:
-  api.ExecuteRequest:
+  ClassFields:
     properties:
-      content:
+      classDescription:
         type: string
-      inputs:
+      className:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+      user:
         items:
-          $ref: '#/definitions/api.Input'
-        type: array
-      language:
-        type: string
-      name:
-        type: string
-      version:
-        type: string
-    type: object
-  api.ExecuteResponse:
-    properties:
-      errors:
-        additionalProperties:
-          $ref: '#/definitions/api.pistonErrorResponse'
-        type: object
-      run:
-        items:
-          $ref: '#/definitions/piston.JobOutput'
+          $ref: '#/definitions/UserFields'
         type: array
     type: object
-  api.Input:
+  CreateUser:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      user_name:
+        type: string
+    type: object
+  CreateUserResult:
+    properties:
+      result:
+        $ref: '#/definitions/UserBasic'
+    type: object
+  ExecutionInput:
     properties:
       args:
         items:
@@ -35,26 +46,22 @@ definitions:
       stdin:
         type: string
     type: object
-  api.RuntimeResponse:
+  ExecutionRequest:
     properties:
-      runtimes:
+      content:
+        type: string
+      inputs:
         items:
-          $ref: '#/definitions/piston.Runtime'
+          $ref: '#/definitions/ExecutionInput'
         type: array
-    type: object
-  api.pistonErrorResponse:
-    properties:
-      message:
+      language:
         type: string
-      status_code:
-        type: integer
-    type: object
-  main.healthCheck.response:
-    properties:
-      message:
+      name:
+        type: string
+      version:
         type: string
     type: object
-  piston.JobOutput:
+  ExecutionResult:
     properties:
       code:
         type: integer
@@ -67,7 +74,25 @@ definitions:
       stdout:
         type: string
     type: object
-  piston.Runtime:
+  ExecutionResults:
+    properties:
+      errors:
+        additionalProperties:
+          $ref: '#/definitions/PistonError'
+        type: object
+      run:
+        items:
+          $ref: '#/definitions/ExecutionResult'
+        type: array
+    type: object
+  PistonError:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  PistonRuntime:
     properties:
       aliases:
         items:
@@ -78,6 +103,91 @@ definitions:
       node:
         type: string
       version:
+        type: string
+    type: object
+  PistonRuntimeList:
+    properties:
+      runtimes:
+        items:
+          $ref: '#/definitions/PistonRuntime'
+        type: array
+    type: object
+  UserAdvanced:
+    properties:
+      classes:
+        items:
+          $ref: '#/definitions/ClassFields'
+        type: array
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      updated_at:
+        type: string
+      user_name:
+        type: string
+    type: object
+  UserBasic:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      user_name:
+        type: string
+    type: object
+  UserFields:
+    properties:
+      class:
+        items:
+          $ref: '#/definitions/ClassFields'
+        type: array
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      updatedAt:
+        type: string
+      userName:
+        type: string
+    type: object
+  UserResult:
+    properties:
+      result:
+        $ref: '#/definitions/UserAdvanced'
+    type: object
+  UsersList:
+    properties:
+      page:
+        type: integer
+      total_pages:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/UserBasic'
+        type: array
+    type: object
+  main.healthCheck.response:
+    properties:
+      message:
         type: string
     type: object
 host: localhost:8080
@@ -116,14 +226,14 @@ paths:
         name: JobDescription
         required: true
         schema:
-          $ref: '#/definitions/api.ExecuteRequest'
+          $ref: '#/definitions/ExecutionRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Describes the result of the execution
           schema:
-            $ref: '#/definitions/api.ExecuteResponse'
+            $ref: '#/definitions/ExecutionResults'
       summary: Execute code and handle user submissions.
       tags:
       - Execute
@@ -139,10 +249,71 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.RuntimeResponse'
+            $ref: '#/definitions/PistonRuntimeList'
       summary: List installed Piston runtimes.
       tags:
       - Execute
+  /users:
+    get:
+      description: |-
+        Gets all users, set page size and page number through query parameters.
+        Defaults to page size = 10 and page = 1
+      parameters:
+      - description: Page size to return
+        in: query
+        name: offset
+        type: integer
+      - description: Page to return
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: Describes the result of the execution
+          schema:
+            $ref: '#/definitions/UsersList'
+      summary: Gets all users (paged)
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Creates the user defined by the request
+      parameters:
+      - description: Description of the user to created
+        in: body
+        name: UserDescription
+        required: true
+        schema:
+          $ref: '#/definitions/CreateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Describes the created user
+          schema:
+            $ref: '#/definitions/CreateUserResult'
+      summary: Creates the user defined by the request
+      tags:
+      - Users
+  /users/{username}:
+    get:
+      description: |-
+        Gets all users, set page size and page number through query parameters.
+        Defaults to page size = 10 and page = 1
+      parameters:
+      - description: Username to query
+        in: path
+        name: username
+        type: string
+      responses:
+        "200":
+          description: Describes the result of the execution
+          schema:
+            $ref: '#/definitions/UserResult'
+      summary: Gets all users (paged)
+      tags:
+      - Users
 schemes:
 - http
 swagger: "2.0"
