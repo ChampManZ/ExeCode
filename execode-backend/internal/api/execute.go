@@ -1,9 +1,7 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"sync"
 
@@ -28,6 +26,7 @@ func (env Env) RuntimeHandler(c echo.Context) error {
 
 	runtimes, statusCode, err := pistonClient.GetRuntimes()
 	if err != nil {
+		// TODO: handle this error better
 		return HandleErrorFromPiston(c, statusCode, err)
 	}
 
@@ -55,11 +54,6 @@ func (env Env) ExecuteHandler(c echo.Context) error {
 		env.PistonAPIKey,
 	)
 
-	b, err := ioutil.ReadAll(c.Request().Body)
-	if err != nil {
-		return err
-	}
-
 	type request struct {
 		Language string  `json:"language"`
 		Version  string  `json:"version"`
@@ -68,8 +62,8 @@ func (env Env) ExecuteHandler(c echo.Context) error {
 		Inputs   []input `json:"inputs"`
 	} // @name ExecutionRequest
 	executionRequest := new(request)
-	if err = json.Unmarshal(b, &executionRequest); err != nil {
-		return err
+	if err := c.Bind(executionRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
 	}
 
 	type response struct {

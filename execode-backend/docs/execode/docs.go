@@ -39,6 +39,157 @@ const docTemplate = `{
                 }
             }
         },
+        "/classes": {
+            "get": {
+                "description": "Gets all classes, set page size and page number through query parameters.",
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Gets all classes (paged)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page size to return",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Page to return",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the result of the execution",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetClassesHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates the class defined by the request, the classes will be lectured by the specified lecturers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Creates the class defined by the request",
+                "parameters": [
+                    {
+                        "description": "Description of the class to created",
+                        "name": "ClassDescription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateClassHandler.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the created class",
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateClassHandler.response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Delete class specified by class_id",
+                "parameters": [
+                    {
+                        "description": "ID of class to delete",
+                        "name": "ClassID",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.DeleteClassHandler.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the result of the execution",
+                        "schema": {
+                            "$ref": "#/definitions/api.DeleteClassHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/classes/{classID}": {
+            "get": {
+                "description": "Gets all classes, set page size and page number through query parameters.",
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Gets all classes (paged)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of class to return",
+                        "name": "classID",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the result of the execution",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetClassesHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/execute": {
             "post": {
                 "description": "Execute the code in the language specified in the POST request body.\nIf it is a submission task then save user submissions as well.",
@@ -97,9 +248,48 @@ const docTemplate = `{
                 }
             }
         },
+        "/lectures": {
+            "post": {
+                "tags": [
+                    "Lectures"
+                ],
+                "summary": "Create lecture for class specified by class_id",
+                "parameters": [
+                    {
+                        "description": "Describes lecture to be created",
+                        "name": "LectureDescription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateLectureHandler.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes lecture created",
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateLectureHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
-                "description": "Gets all users, set page size and page number through query parameters.\nDefaults to page size = 10 and page = 1",
+                "description": "Gets all users, set page size and page number through query parameters.",
                 "tags": [
                     "Users"
                 ],
@@ -107,12 +297,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "Page size to return",
                         "name": "offset",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "default": 10,
                         "description": "Page to return",
                         "name": "limit",
                         "in": "query"
@@ -123,6 +315,18 @@ const docTemplate = `{
                         "description": "Describes the result of the execution",
                         "schema": {
                             "$ref": "#/definitions/UsersList"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
                         }
                     }
                 }
@@ -162,11 +366,11 @@ const docTemplate = `{
         },
         "/users/{username}": {
             "get": {
-                "description": "Gets all users, set page size and page number through query parameters.\nDefaults to page size = 10 and page = 1",
+                "description": "Queries only one user resulting from the specified username",
                 "tags": [
                     "Users"
                 ],
-                "summary": "Gets all users (paged)",
+                "summary": "Gets single user defined by username parameter",
                 "parameters": [
                     {
                         "type": "string",
@@ -177,9 +381,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Describes the result of the execution",
+                        "description": "Describes the user entity",
                         "schema": {
-                            "$ref": "#/definitions/UserResult"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/swaggercompat.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "result": {
+                                            "$ref": "#/definitions/UserAdvanced"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -187,6 +403,34 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "ClassBasic": {
+            "type": "object",
+            "properties": {
+                "class_description": {
+                    "type": "string"
+                },
+                "class_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "ClassBasicNoRelation": {
+            "type": "object",
+            "properties": {
+                "class_description": {
+                    "type": "string"
+                },
+                "class_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "ClassFields": {
             "type": "object",
             "properties": {
@@ -199,20 +443,11 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "deletedAt": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "user": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/UserFields"
-                    }
                 }
             }
         },
@@ -366,7 +601,7 @@ const docTemplate = `{
                 "classes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ClassFields"
+                        "$ref": "#/definitions/ClassBasicNoRelation"
                     }
                 },
                 "created_at": {
@@ -412,56 +647,10 @@ const docTemplate = `{
                 }
             }
         },
-        "UserFields": {
-            "type": "object",
-            "properties": {
-                "class": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ClassFields"
-                    }
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "firstName": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userName": {
-                    "type": "string"
-                }
-            }
-        },
-        "UserResult": {
-            "type": "object",
-            "properties": {
-                "result": {
-                    "$ref": "#/definitions/UserAdvanced"
-                }
-            }
-        },
         "UsersList": {
             "type": "object",
             "properties": {
-                "page": {
-                    "type": "integer"
-                },
-                "total_pages": {
+                "count": {
                     "type": "integer"
                 },
                 "users": {
@@ -472,12 +661,149 @@ const docTemplate = `{
                 }
             }
         },
+        "api.CreateClassHandler.request": {
+            "type": "object",
+            "properties": {
+                "class_description": {
+                    "type": "string"
+                },
+                "class_name": {
+                    "type": "string"
+                },
+                "lecturers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "api.CreateClassHandler.response": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/ClassBasic"
+                }
+            }
+        },
+        "api.CreateLectureHandler.request": {
+            "type": "object",
+            "properties": {
+                "class_id": {
+                    "type": "integer"
+                },
+                "lecture_content": {
+                    "type": "string"
+                },
+                "lecture_description": {
+                    "type": "string"
+                },
+                "lecture_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.CreateLectureHandler.response": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/entities.Lecture"
+                }
+            }
+        },
+        "api.DeleteClassHandler.request": {
+            "type": "object",
+            "properties": {
+                "class_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.DeleteClassHandler.response": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.GetClassesHandler.response": {
+            "type": "object",
+            "properties": {
+                "classes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ClassBasic"
+                    }
+                },
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entities.Lecture": {
+            "type": "object",
+            "properties": {
+                "class": {
+                    "$ref": "#/definitions/ClassFields"
+                },
+                "classID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lectureContent": {
+                    "$ref": "#/definitions/entities.LectureContent"
+                },
+                "lectureDescription": {
+                    "type": "string"
+                },
+                "lectureName": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.LectureContent": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "lectureID": {
+                    "type": "integer"
+                }
+            }
+        },
         "main.healthCheck.response": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string"
                 }
+            }
+        },
+        "swaggercompat.Response": {
+            "type": "object",
+            "properties": {
+                "result": {}
             }
         }
     }

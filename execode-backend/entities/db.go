@@ -44,3 +44,29 @@ func AutoMigrate() error {
 	}
 	return err
 }
+
+type EntityType interface {
+	User | Class | Lecture | Problem
+}
+
+func GetAll[T EntityType, V any](model *T, data *[]V, limit, offset int) (int64, error) {
+	var count int64
+	err := db.Model(model).Count(&count).Scopes(Paginate(limit, offset)).Find(data).Error
+	return count, err
+}
+
+func Create[T EntityType](data *T) error {
+	err := db.Create(data).Error
+	return err
+}
+
+func QueryOne[T EntityType, V any](structQuery *T, data *V) error {
+	err := db.Model(structQuery).Where(structQuery).First(data).Error
+	return err
+}
+
+func QueryMany[T EntityType, V any](structQuery *T, data *[]V, limit, offset int) (int64, error) {
+	var count int64
+	err := db.Model(structQuery).Where(structQuery).Count(&count).Scopes(Paginate(limit, offset)).Find(data).Error
+	return count, err
+}

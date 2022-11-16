@@ -30,22 +30,38 @@ type APIUserBasic struct {
 } // @name UserBasic
 
 type APIUserAdvanced struct {
-	ID        uint      `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	UserName  string    `json:"user_name"`
-	FirstName string    `json:"first_name,omitempty"`
-	LastName  string    `json:"last_name,omitempty"`
-	Email     string    `json:"email"`
-	Class     []Class   `json:"classes" gorm:"many2many:class_lecturer"`
-} // @name UserAdvanced
+	ID        uint            `json:"id"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
+	UserName  string          `json:"user_name"`
+	FirstName string          `json:"first_name,omitempty"`
+	LastName  string          `json:"last_name,omitempty"`
+	Email     string          `json:"email"`
+	Class     []APIClassBasic `json:"classes" gorm:"many2many:class_lecturer"`
+}
+
+func (u User) Basic() APIUserBasic {
+	return APIUserBasic{u.ID, u.UserName, u.FirstName, u.LastName, u.Email}
+}
+
+func (u User) Advanced() APIUserAdvanced {
+	return APIUserAdvanced{u.ID, u.CreatedAt, u.UpdatedAt, u.UserName, u.FirstName, u.LastName, u.Email, ClassList(u.Class).Basic()}
+}
+
+type UserList []User
+
+func (us UserList) Advanced() []APIUserBasic {
+	ret := make([]APIUserBasic, len(us))
+	for i, u := range us {
+		ret[i] = u.Basic()
+	}
+	return ret
+}
 
 func GetUsers(pageSize, page int) ([]APIUserBasic, int64, error) {
 	users := []APIUserBasic{}
-	var count int64
-	err := db.Model(&User{}).Scopes(Paginate(pageSize, page)).Find(&users).Count(&count).Error
-	totalPages := count/int64(pageSize) + int64(page)
-	return users, totalPages, err
+	count, err := GetAll(&User{}, &users, pageSize, page)
+	return users, count, err
 }
 
 func CreateUser(username, firstname, lastname, email, password string) (APIUserBasic, error) {
@@ -61,9 +77,9 @@ func CreateUser(username, firstname, lastname, email, password string) (APIUserB
 		HashedPassword: string(hash),
 	}
 
-	result := db.Create(&user)
-	if result.Error != nil {
-		return APIUserBasic{}, result.Error
+	err = Create(&user)
+	if err != nil {
+		return APIUserBasic{}, err
 	}
 	return APIUserBasic{
 		user.ID,
@@ -76,7 +92,20 @@ func CreateUser(username, firstname, lastname, email, password string) (APIUserB
 
 func GetUserByUsername(username string) (APIUserAdvanced, error) {
 	user := APIUserAdvanced{}
-	structQuery := &User{UserName: username}
-	err := db.Model(structQuery).Where(structQuery).First(&user).Error
+	structQuery := User{UserName: username}
+	err := QueryOne(&structQuery, &user)
+	if err != nil {
+		return user, err
+	}
+	structQuery.ID = user.ID
+	err = db.Model(&structQuery).Association("Class").Find(&user.Class)
+	if err != nil {
+		return user, err
+	}
 	return user, err
+}
+
+func QueryUsersByUsername(usernames []string, data *[]User) error {
+	err := db.Table("execode.users").Where("user_name IN ?", usernames).Find(data).Error
+	return err
 }

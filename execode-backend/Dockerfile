@@ -18,4 +18,4 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=builder /execode/execode-server ./
 COPY --from=builder /execode/piston-packages.txt ./
-CMD ["./execode-server"]
+ENTRYPOINT ["./execode-server" ]

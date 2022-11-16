@@ -61,6 +61,13 @@ func main() {
 	e.GET("/users", api.GetUsersHandler)
 	e.GET("/users/:username", api.GetUserHandler)
 
+	e.POST("/classes", api.CreateClassHandler)
+	e.GET("/classes", api.GetClassesHandler)
+	e.GET("/classes/:classID", api.GetClassHandler)
+	e.DELETE("/classes", api.DeleteClassHandler)
+
+	e.POST("/lectures", api.CreateLectureHandler)
+
 	// Utils
 	e.GET("/", healthCheck)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)

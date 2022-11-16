@@ -1,5 +1,23 @@
 basePath: /
 definitions:
+  ClassBasic:
+    properties:
+      class_description:
+        type: string
+      class_name:
+        type: string
+      id:
+        type: integer
+    type: object
+  ClassBasicNoRelation:
+    properties:
+      class_description:
+        type: string
+      class_name:
+        type: string
+      id:
+        type: integer
+    type: object
   ClassFields:
     properties:
       classDescription:
@@ -8,16 +26,10 @@ definitions:
         type: string
       createdAt:
         type: string
-      deletedAt:
-        type: string
       id:
         type: integer
       updatedAt:
         type: string
-      user:
-        items:
-          $ref: '#/definitions/UserFields'
-        type: array
     type: object
   CreateUser:
     properties:
@@ -116,7 +128,7 @@ definitions:
     properties:
       classes:
         items:
-          $ref: '#/definitions/ClassFields'
+          $ref: '#/definitions/ClassBasicNoRelation'
         type: array
       created_at:
         type: string
@@ -146,49 +158,107 @@ definitions:
       user_name:
         type: string
     type: object
-  UserFields:
-    properties:
-      class:
-        items:
-          $ref: '#/definitions/ClassFields'
-        type: array
-      createdAt:
-        type: string
-      deletedAt:
-        type: string
-      email:
-        type: string
-      firstName:
-        type: string
-      id:
-        type: integer
-      lastName:
-        type: string
-      updatedAt:
-        type: string
-      userName:
-        type: string
-    type: object
-  UserResult:
-    properties:
-      result:
-        $ref: '#/definitions/UserAdvanced'
-    type: object
   UsersList:
     properties:
-      page:
-        type: integer
-      total_pages:
+      count:
         type: integer
       users:
         items:
           $ref: '#/definitions/UserBasic'
         type: array
     type: object
+  api.CreateClassHandler.request:
+    properties:
+      class_description:
+        type: string
+      class_name:
+        type: string
+      lecturers:
+        items:
+          type: string
+        type: array
+    type: object
+  api.CreateClassHandler.response:
+    properties:
+      result:
+        $ref: '#/definitions/ClassBasic'
+    type: object
+  api.CreateLectureHandler.request:
+    properties:
+      class_id:
+        type: integer
+      lecture_content:
+        type: string
+      lecture_description:
+        type: string
+      lecture_name:
+        type: string
+    type: object
+  api.CreateLectureHandler.response:
+    properties:
+      result:
+        $ref: '#/definitions/entities.Lecture'
+    type: object
+  api.DeleteClassHandler.request:
+    properties:
+      class_id:
+        type: integer
+    type: object
+  api.DeleteClassHandler.response:
+    properties:
+      status:
+        type: string
+    type: object
+  api.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  api.GetClassesHandler.response:
+    properties:
+      classes:
+        items:
+          $ref: '#/definitions/ClassBasic'
+        type: array
+      count:
+        type: integer
+    type: object
+  entities.Lecture:
+    properties:
+      class:
+        $ref: '#/definitions/ClassFields'
+      classID:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      lectureContent:
+        $ref: '#/definitions/entities.LectureContent'
+      lectureDescription:
+        type: string
+      lectureName:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entities.LectureContent:
+    properties:
+      content:
+        type: string
+      lectureID:
+        type: integer
+    type: object
   main.healthCheck.response:
     properties:
       message:
         type: string
+    type: object
+  swaggercompat.Response:
+    properties:
+      result: {}
     type: object
 host: localhost:8080
 info:
@@ -212,6 +282,106 @@ paths:
       summary: Show the status of server.
       tags:
       - Health
+  /classes:
+    delete:
+      parameters:
+      - description: ID of class to delete
+        in: body
+        name: ClassID
+        required: true
+        schema:
+          $ref: '#/definitions/api.DeleteClassHandler.request'
+      responses:
+        "200":
+          description: Describes the result of the execution
+          schema:
+            $ref: '#/definitions/api.DeleteClassHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Delete class specified by class_id
+      tags:
+      - Classes
+    get:
+      description: Gets all classes, set page size and page number through query parameters.
+      parameters:
+      - default: 1
+        description: Page size to return
+        in: query
+        name: offset
+        type: integer
+      - default: 10
+        description: Page to return
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: Describes the result of the execution
+          schema:
+            $ref: '#/definitions/api.GetClassesHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Gets all classes (paged)
+      tags:
+      - Classes
+    post:
+      consumes:
+      - application/json
+      description: Creates the class defined by the request, the classes will be lectured
+        by the specified lecturers
+      parameters:
+      - description: Description of the class to created
+        in: body
+        name: ClassDescription
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateClassHandler.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Describes the created class
+          schema:
+            $ref: '#/definitions/api.CreateClassHandler.response'
+      summary: Creates the class defined by the request
+      tags:
+      - Classes
+  /classes/{classID}:
+    get:
+      description: Gets all classes, set page size and page number through query parameters.
+      parameters:
+      - description: ID of class to return
+        in: path
+        name: classID
+        type: integer
+      responses:
+        "200":
+          description: Describes the result of the execution
+          schema:
+            $ref: '#/definitions/api.GetClassesHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Gets all classes (paged)
+      tags:
+      - Classes
   /execute:
     post:
       consumes:
@@ -253,17 +423,42 @@ paths:
       summary: List installed Piston runtimes.
       tags:
       - Execute
+  /lectures:
+    post:
+      parameters:
+      - description: Describes lecture to be created
+        in: body
+        name: LectureDescription
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateLectureHandler.request'
+      responses:
+        "200":
+          description: Describes lecture created
+          schema:
+            $ref: '#/definitions/api.CreateLectureHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Create lecture for class specified by class_id
+      tags:
+      - Lectures
   /users:
     get:
-      description: |-
-        Gets all users, set page size and page number through query parameters.
-        Defaults to page size = 10 and page = 1
+      description: Gets all users, set page size and page number through query parameters.
       parameters:
-      - description: Page size to return
+      - default: 1
+        description: Page size to return
         in: query
         name: offset
         type: integer
-      - description: Page to return
+      - default: 10
+        description: Page to return
         in: query
         name: limit
         type: integer
@@ -272,6 +467,14 @@ paths:
           description: Describes the result of the execution
           schema:
             $ref: '#/definitions/UsersList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
       summary: Gets all users (paged)
       tags:
       - Users
@@ -298,9 +501,7 @@ paths:
       - Users
   /users/{username}:
     get:
-      description: |-
-        Gets all users, set page size and page number through query parameters.
-        Defaults to page size = 10 and page = 1
+      description: Queries only one user resulting from the specified username
       parameters:
       - description: Username to query
         in: path
@@ -308,10 +509,15 @@ paths:
         type: string
       responses:
         "200":
-          description: Describes the result of the execution
+          description: Describes the user entity
           schema:
-            $ref: '#/definitions/UserResult'
-      summary: Gets all users (paged)
+            allOf:
+            - $ref: '#/definitions/swaggercompat.Response'
+            - properties:
+                result:
+                  $ref: '#/definitions/UserAdvanced'
+              type: object
+      summary: Gets single user defined by username parameter
       tags:
       - Users
 schemes:
