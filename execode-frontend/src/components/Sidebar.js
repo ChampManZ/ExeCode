@@ -86,12 +86,7 @@ export default function PersistentDrawerLeft() {
     setOpen(false);
   };
 
-  // const navigate = useNavigate();
 
-  // const navigateToCourse = () => {
-  //   // navigate to /course
-  //   navigate('/Courses');
-  // };
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -142,14 +137,13 @@ export default function PersistentDrawerLeft() {
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
-              {/* <a href='/home'>Home</a> */}
+    
               <ListItemText primary="Home" />
             </ListItemButton>
           </ListItem>
 
           {/* courses */}
           <ListItem disablePadding>
-            {/* <ListItemButton onClick={navigateToCourse}> */}
             <ListItemButton href="/courses">
               <ListItemIcon>
                 <BackpackIcon />
