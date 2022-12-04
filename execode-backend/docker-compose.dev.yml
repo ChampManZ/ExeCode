@@ -20,7 +20,7 @@ services:
     container_name: execode_api
     depends_on:
       - db
-      - piston_api
+      - piston
     environment:
       - POSTGRES_HOST=db
       - DATABASE_NAME=postgres
