@@ -33,10 +33,10 @@ func AutoMigrate() error {
 	err := db.AutoMigrate(
 		&User{},
 		&Class{},
-		&LectureContent{},
-		&ProblemContent{},
 		&Lecture{},
 		&Problem{},
+		&LectureContent{},
+		&ProblemContent{},
 		&TestCase{},
 	)
 	if db.Error != nil {
