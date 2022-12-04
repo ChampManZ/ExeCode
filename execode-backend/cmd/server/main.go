@@ -12,7 +12,9 @@ import (
 	_ "github.com/ChampManZ/ExeCode/v2/docs/execode"
 	"github.com/ChampManZ/ExeCode/v2/entities"
 	"github.com/ChampManZ/ExeCode/v2/internal/api"
+	"github.com/ChampManZ/ExeCode/v2/internal/auth"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	_ "gorm.io/gorm"
@@ -46,12 +48,23 @@ func main() {
 	}
 
 	fmt.Println("Database initialized...")
+
+	authEnv, _ := auth.GetEnv()
+	err = authEnv.InitKeys()
+	if err != nil {
+		log.Fatalf("failed to initialize keys: %v", err)
+	}
+
 	fmt.Println("Starting server...")
 
 	// Setup
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
 
+	e.Use(middleware.JWTWithConfig(authEnv.JwtConfig()))
+
+	// e.POST("/login", auth.LoginHandler)
+	// e.GET("/refresh", auth.RefreshHandler)
 	// Execute apis
 	e.GET("/execute/runtimes", env.RuntimeHandler)
 	e.POST("/execute", env.ExecuteHandler)
@@ -59,14 +72,24 @@ func main() {
 	// CRUD apis
 	e.POST("/users", api.CreateUserHandler)
 	e.GET("/users", api.GetUsersHandler)
-	e.GET("/users/:username", api.GetUserHandler)
+	e.GET("/users/:userID", api.GetUserHandler)
 
 	e.POST("/classes", api.CreateClassHandler)
 	e.GET("/classes", api.GetClassesHandler)
+	e.GET("/users/:userID/classes", api.GetUserClassesHandler)
 	e.GET("/classes/:classID", api.GetClassHandler)
-	e.DELETE("/classes", api.DeleteClassHandler)
+	e.DELETE("/classes/:classID", api.DeleteClassHandler)
 
 	e.POST("/lectures", api.CreateLectureHandler)
+	e.GET("/classes/:class/lectures", api.GetClassLecturesHandler)
+	e.GET("/lectures/:lectureID", api.GetLectureHandler)
+	e.DELETE("/lectures/:lectureID", api.DeleteLectureHandler)
+
+	e.POST("/problems", api.CreateProblemHandler)
+	e.GET("/problems", api.GetProblemsHandler)
+	e.GET("/classes/:lecture/problems", api.GetClassProblemsHandler)
+	e.GET("/problems/:problemID", api.GetProblemHandler)
+	e.DELETE("/problems/:problemID", api.DeleteProblemHandler)
 
 	// Utils
 	e.GET("/", healthCheck)

@@ -16,16 +16,16 @@ import (
 // @Tags        Users
 // @Accept      application/json
 // @Produce     json
+// @Security ApiKeyAuth
+// @param Authorization header string true "Authorization"
 // @Param       UserDescription body     api.CreateUserHandler.request  true "Description of the user to created"
 // @Success     200             {object} api.CreateUserHandler.response "Describes the created user"
 // @Router      /users [post]
 func CreateUserHandler(c echo.Context) error {
 	type request struct {
-		UserName  string `json:"user_name"`
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-		Email     string `json:"email"`
-		Password  string `json:"password"`
+		UserName string `json:"user_name"`
+		Name     string `json:"name"`
+		Email    string `json:"email"`
 	} // @name CreateUser
 	var body request
 	err := c.Bind(&body)
@@ -33,7 +33,7 @@ func CreateUserHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
 	}
 
-	user, err := entities.CreateUser(body.UserName, body.FirstName, body.LastName, body.Email, body.Password)
+	user, err := entities.CreateUser(body.UserName, body.Name, body.Email)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
 	}
@@ -82,12 +82,16 @@ func GetUsersHandler(c echo.Context) error {
 // @Summary     Gets single user defined by username parameter
 // @Description Queries only one user resulting from the specified username
 // @Tags        Users
-// @Param       username path     string                      false "Username to query"
+// @Param       userID path     uint                      false "Username to query"
 // @Success     200      {object} swaggercompat.Response{result=swaggercompat.UserAdvanceWithRelation} "Describes the user entity"
-// @Router      /users/{username} [get]
+// @Router      /users/{userID} [get]
 func GetUserHandler(c echo.Context) error {
-	userName := c.Param("username")
-	user, err := entities.GetUserByUsername(userName)
+	userID := c.Param("userID")
+	uid, err := strconv.ParseUint(userID, 10, 64)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{"invalid class ID"})
+	}
+	user, err := entities.GetUserByUserID(uint(uid))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
 	}
@@ -95,7 +99,7 @@ func GetUserHandler(c echo.Context) error {
 	type response struct {
 		Result entities.APIUserAdvanced `json:"result"`
 	} // @name UserResult
-	return c.JSON(http.StatusOK, response{user})
+	return c.JSON(http.StatusOK, response{user.Advanced()})
 }
 
 /* --------------CLASSES-------------- */
@@ -155,7 +159,7 @@ func CreateClassHandler(c echo.Context) error {
 // @Summary     Gets all classes (paged)
 // @Description Gets all classes, set page size and page number through query parameters.
 // @Tags        Classes
-// @Param       classID  path    int                          false "ID of class to return"
+// @Param       classID  path    uint                          false "ID of class to return"
 // @Success     200    {object} api.GetClassesHandler.response "Describes the result of the execution"
 // @Failure		400 {object} ErrorResponse
 // @Failure		500 {object} ErrorResponse
@@ -212,23 +216,42 @@ func GetClassesHandler(c echo.Context) error {
 }
 
 // DeleteClassHandler godoc
+// @Summary     Get user class specified by class_id
+// @Tags        Classes
+// @Param       userID path     string  true "username of user to query"
+// @Success     200    {object} api.GetUserClassesHandler.response "Describes the result of the execution"
+// @Failure		500 {object} ErrorResponse
+// @Router      /users/{userID}/classes [get]
+func GetUserClassesHandler(c echo.Context) error {
+	username := c.Param("username")
+
+	class, err := entities.GetUserClasses(username)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+
+	type response struct {
+		Classes []entities.APIClassBasic `json:"classes"`
+	}
+	return c.JSON(http.StatusOK, response{class.Basic()})
+}
+
+// DeleteClassHandler godoc
 // @Summary     Delete class specified by class_id
 // @Tags        Classes
-// @Param       ClassID body     api.DeleteClassHandler.request  true "ID of class to delete"
+// @Param       ClassID path     uint  true "ID of class to delete"
 // @Success     200    {object} api.DeleteClassHandler.response "Describes the result of the execution"
 // @Failure		400 {object} ErrorResponse
 // @Failure		500 {object} ErrorResponse
-// @Router      /classes [delete]
+// @Router      /classes/{classID} [delete]
 func DeleteClassHandler(c echo.Context) error {
-	type request struct {
-		ClassID uint `json:"class_id"`
-	}
-	body := request{}
-	if err := c.Bind(&body); err != nil {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{"failed to bind request body"})
+	classID := c.Param("classID")
+	CID, err := strconv.Atoi(classID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"invalid class ID"})
 	}
 
-	if err := entities.DeleteClass(body.ClassID); err != nil {
+	if err := entities.DeleteClass(uint(CID)); err != nil {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
 
 	}
@@ -237,6 +260,8 @@ func DeleteClassHandler(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, response{"success"})
 }
+
+/* --------------LECTURES-------------- */
 
 // CreateLectureHandler godoc
 // @Summary     Create lecture for class specified by class_id
@@ -270,7 +295,235 @@ func CreateLectureHandler(c echo.Context) error {
 	}
 
 	type response struct {
-		Result entities.Lecture `json:"result"`
+		Result entities.APILectureAdvanced `json:"result"`
 	}
-	return c.JSON(http.StatusOK, response{lecture})
+	return c.JSON(http.StatusOK, response{lecture.Advanced()})
+}
+
+// GetLectureHandler godoc
+// @Summary     Get Lecture specified by lecture_id
+// @Tags        Lectures
+// @Param       LectureID path     uint  true "LectureID to get"
+// @Success     200    {object} api.GetLectureHandler.response "Describes lecture created"
+// @Failure		400 {object} ErrorResponse
+// @Failure		500 {object} ErrorResponse
+// @Router      /lectures/{LectureID} [get]
+func GetLectureHandler(c echo.Context) error {
+	str_id := c.Param("lectureID")
+	ID, err := strconv.Atoi(str_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"invalid lecture ID"})
+	}
+
+	lecture, err := entities.GetLectureByID(uint(ID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+	type response struct {
+		Result entities.APILectureAdvanced `json:"result"`
+	}
+	return c.JSON(http.StatusOK, response{lecture.Advanced()})
+}
+
+// GetClassLecturesHandler godoc
+// @Summary     Get lectures belonging to class
+// @Tags        Lectures
+// @Param       ClassID path     uint  true "Class ID to query"
+// @Success     200    {object} api.GetClassLecturesHandler.response "Describes lecture created"
+// @Failure		400 {object} ErrorResponse
+// @Failure		500 {object} ErrorResponse
+// @Router      /classes/{ClassID}/lectures [get]
+func GetClassLecturesHandler(c echo.Context) error {
+	class := c.Param("class")
+	cid, err := strconv.ParseUint(class, 10, 64)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{"invalid class ID"})
+	}
+
+	lectures, err := entities.GetClassLecturesByID(uint(cid))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+
+	type response struct {
+		Lectures []entities.APILectureBasic `json:"lectures"`
+	}
+	return c.JSON(http.StatusOK, response{entities.LectureList(lectures).Basic()})
+}
+
+// DeleteLectureHandler godoc
+// @Summary     Get Lecture specified by lecture_id
+// @Tags        Lectures
+// @Param       LectureID path     uint  true "LectureID to get"
+// @Success     200    {object} api.GetLectureHandler.response "Describes lecture created"
+// @Failure		400 {object} ErrorResponse
+// @Failure		500 {object} ErrorResponse
+// @Router      /lectures/{LectureID} [delete]
+func DeleteLectureHandler(c echo.Context) error {
+	str_id := c.Param("lectureID")
+	ID, err := strconv.Atoi(str_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"invalid lecture ID"})
+	}
+
+	if err = entities.DeleteLecture(uint(ID)); err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+
+	type response struct {
+		Status string `json:"status"`
+	}
+	return c.JSON(http.StatusOK, response{"success"})
+}
+
+// CreateProblemHandler godoc
+// @Summary     Create lecture for class specified by class_id
+// @Tags        Problems
+// @Param       ProblemDescription body     api.CreateProblemHandler.request  true "Describes lecture to be created"
+// @Success     200    {object} api.CreateProblemHandler.response "Describes lecture created"
+// @Failure		400 {object} ErrorResponse
+// @Failure		500 {object} ErrorResponse
+// @Router      /problems [post]
+func CreateProblemHandler(c echo.Context) error {
+	type testcase struct {
+		Input  string `json:"input"`
+		Output string `json:"output"`
+	}
+	type request struct {
+		ClassID     int                 `json:"class_id"`
+		ProblemName string              `json:"problem_name"`
+		Content     string              `json:"content"`
+		Testcases   []entities.TestCase `json:"testcases"`
+	}
+	body := request{}
+	if err := c.Bind(&body); err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
+	}
+
+	problem := entities.Problem{
+		ClassID:     body.ClassID,
+		ProblemName: body.ProblemName,
+		ProblemContent: entities.ProblemContent{
+			Content:   body.Content,
+			TestCases: body.Testcases,
+		},
+	}
+
+	if err := entities.Create(&problem); err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+
+	type response struct {
+		Result entities.Problem `json:"result"`
+	}
+	return c.JSON(http.StatusOK, response{problem})
+}
+
+// GetProblemsHandler godoc
+// @Summary     Gets all classes (paged)
+// @Description Gets all classes, set page size and page number through query parameters.
+// @Tags        Problems
+// @Param       offset query    int                          false "Page size to return" default(1)
+// @Param       limit  query    int                          false "Page to return" default(10)
+// @Success     200    {object} api.GetProblemsHandler.response "Describes the result of the execution"
+// @Failure		400 {object} ErrorResponse
+// @Failure		500 {object} ErrorResponse
+// @Router      /problems [get]
+func GetProblemsHandler(c echo.Context) error {
+	pagesizeParam := c.QueryParam("limit")
+	pageParam := c.QueryParam("offset")
+
+	page, pagesize, err := parseOffsetLimit(pageParam, pagesizeParam)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{"Invalid page or pagesize parameter"})
+	}
+	problems := []entities.APIProblemBasic{}
+	count, err := entities.QueryMany(&entities.Problem{}, &problems, pagesize, page)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+
+	type response struct {
+		User  []entities.APIProblemBasic `json:"classes"`
+		Count int64                      `json:"count"`
+	}
+
+	return c.JSON(http.StatusOK, response{problems, count})
+}
+
+// GetProblemHandler godoc
+// @Summary     Get Lecture specified by lecture_id
+// @Tags        Problems
+// @Param       ProblemID path     uint  true "LectureID to get"
+// @Success     200    {object} api.GetLectureHandler.response "Describes lecture created"
+// @Failure		400 {object} ErrorResponse
+// @Failure		500 {object} ErrorResponse
+// @Router      /problems/{ProblemID} [get]
+func GetProblemHandler(c echo.Context) error {
+	str_id := c.Param("problemID")
+	ID, err := strconv.Atoi(str_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"invalid problem ID"})
+	}
+
+	problem, err := entities.GetProblemByID(uint(ID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+	type response struct {
+		Result entities.APIProblemAdvanced `json:"result"`
+	}
+	return c.JSON(http.StatusOK, response{problem.Advanced()})
+}
+
+// GetClassLecturesHandler godoc
+// @Summary     Get lectures belonging to class
+// @Tags        Lectures
+// @Param       ClassID path     uint  true "Class ID to query"
+// @Success     200    {object} api.GetClassProblemsHandler.response "Describes lecture created"
+// @Failure		400 {object} ErrorResponse
+// @Failure		500 {object} ErrorResponse
+// @Router      /classes/{ClassID}/problems [get]
+func GetClassProblemsHandler(c echo.Context) error {
+	class := c.Param("class")
+	cid, err := strconv.ParseUint(class, 10, 64)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{"invalid class ID"})
+	}
+
+	problems, err := entities.GetClassProblemsByID(uint(cid))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+
+	type response struct {
+		Problems []entities.APIProblemBasic `json:"problems"`
+	}
+
+	return c.JSON(http.StatusOK, response{entities.ProblemList(problems).Basic()})
+}
+
+// DeleteProblemHandler godoc
+// @Summary     Get Lecture specified by problem_id
+// @Tags        Problems
+// @Param       ProblemID path     uint  true "ProblemID to delete"
+// @Success     200    {object} api.DeleteProblemHandler.response "Describes lecture created"
+// @Failure		400 {object} ErrorResponse
+// @Failure		500 {object} ErrorResponse
+// @Router      /problems/{ProblemID} [delete]
+func DeleteProblemHandler(c echo.Context) error {
+	str_id := c.Param("problemID")
+	ID, err := strconv.Atoi(str_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"invalid problem ID"})
+	}
+
+	if err = entities.DeleteProblemByID(uint(ID)); err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{err.Error()})
+	}
+
+	type response struct {
+		Status string `json:"status"`
+	}
+	return c.JSON(http.StatusOK, response{"success"})
 }

@@ -114,28 +114,65 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/classes/{ClassID}/lectures": {
+            "get": {
                 "tags": [
-                    "Classes"
+                    "Lectures"
                 ],
-                "summary": "Delete class specified by class_id",
+                "summary": "Get lectures belonging to class",
                 "parameters": [
                     {
-                        "description": "ID of class to delete",
+                        "type": "integer",
+                        "description": "Class ID to query",
                         "name": "ClassID",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.DeleteClassHandler.request"
-                        }
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Describes the result of the execution",
+                        "description": "Describes lecture created",
                         "schema": {
-                            "$ref": "#/definitions/api.DeleteClassHandler.response"
+                            "$ref": "#/definitions/api.GetClassLecturesHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/classes/{ClassID}/problems": {
+            "get": {
+                "tags": [
+                    "Lectures"
+                ],
+                "summary": "Get lectures belonging to class",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Class ID to query",
+                        "name": "ClassID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes lecture created",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetClassProblemsHandler.response"
                         }
                     },
                     "400": {
@@ -173,6 +210,41 @@ const docTemplate = `{
                         "description": "Describes the result of the execution",
                         "schema": {
                             "$ref": "#/definitions/api.GetClassesHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Delete class specified by class_id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of class to delete",
+                        "name": "ClassID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the result of the execution",
+                        "schema": {
+                            "$ref": "#/definitions/api.DeleteClassHandler.response"
                         }
                     },
                     "400": {
@@ -287,6 +359,289 @@ const docTemplate = `{
                 }
             }
         },
+        "/lectures/{LectureID}": {
+            "get": {
+                "tags": [
+                    "Lectures"
+                ],
+                "summary": "Get Lecture specified by lecture_id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "LectureID to get",
+                        "name": "LectureID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes lecture created",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetLectureHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Lectures"
+                ],
+                "summary": "Get Lecture specified by lecture_id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "LectureID to get",
+                        "name": "LectureID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes lecture created",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetLectureHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Authenticates with basic authentication return a JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login endpoint",
+                "parameters": [
+                    {
+                        "description": "Description of the user to created",
+                        "name": "loginCredentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginHandler.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the created user",
+                        "schema": {
+                            "$ref": "#/definitions/auth.BearerToken"
+                        }
+                    }
+                }
+            }
+        },
+        "/problems": {
+            "get": {
+                "description": "Gets all classes, set page size and page number through query parameters.",
+                "tags": [
+                    "Problems"
+                ],
+                "summary": "Gets all classes (paged)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page size to return",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Page to return",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the result of the execution",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetProblemsHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Problems"
+                ],
+                "summary": "Create lecture for class specified by class_id",
+                "parameters": [
+                    {
+                        "description": "Describes lecture to be created",
+                        "name": "ProblemDescription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateProblemHandler.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes lecture created",
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateProblemHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/problems/{ProblemID}": {
+            "get": {
+                "tags": [
+                    "Problems"
+                ],
+                "summary": "Get Lecture specified by lecture_id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "LectureID to get",
+                        "name": "ProblemID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes lecture created",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetLectureHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Problems"
+                ],
+                "summary": "Get Lecture specified by problem_id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ProblemID to delete",
+                        "name": "ProblemID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes lecture created",
+                        "schema": {
+                            "$ref": "#/definitions/api.DeleteProblemHandler.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/refresh": {
+            "get": {
+                "description": "Provides a new access token given that there is a valid refresh-token cookie",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh endpoint",
+                "responses": {
+                    "200": {
+                        "description": "Describes the created user",
+                        "schema": {
+                            "$ref": "#/definitions/auth.BearerToken"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "Gets all users, set page size and page number through query parameters.",
@@ -332,6 +687,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Creates the user defined by the request",
                 "consumes": [
                     "application/json"
@@ -344,6 +704,13 @@ const docTemplate = `{
                 ],
                 "summary": "Creates the user defined by the request",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Description of the user to created",
                         "name": "UserDescription",
@@ -364,7 +731,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/{username}": {
+        "/users/{userID}": {
             "get": {
                 "description": "Queries only one user resulting from the specified username",
                 "tags": [
@@ -373,9 +740,9 @@ const docTemplate = `{
                 "summary": "Gets single user defined by username parameter",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "Username to query",
-                        "name": "username",
+                        "name": "userID",
                         "in": "path"
                     }
                 ],
@@ -396,6 +763,37 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userID}/classes": {
+            "get": {
+                "tags": [
+                    "Classes"
+                ],
+                "summary": "Get user class specified by class_id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username of user to query",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Describes the result of the execution",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetUserClassesHandler.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
                         }
                     }
                 }
@@ -445,6 +843,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "lectures": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Lecture"
+                    }
                 },
                 "updatedAt": {
                     "type": "string"
@@ -707,19 +1111,47 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "result": {
-                    "$ref": "#/definitions/entities.Lecture"
+                    "$ref": "#/definitions/entities.APILectureAdvanced"
                 }
             }
         },
-        "api.DeleteClassHandler.request": {
+        "api.CreateProblemHandler.request": {
             "type": "object",
             "properties": {
                 "class_id": {
                     "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "problem_name": {
+                    "type": "string"
+                },
+                "testcases": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.TestCase"
+                    }
+                }
+            }
+        },
+        "api.CreateProblemHandler.response": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/entities.Problem"
                 }
             }
         },
         "api.DeleteClassHandler.response": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.DeleteProblemHandler.response": {
             "type": "object",
             "properties": {
                 "status": {
@@ -735,6 +1167,28 @@ const docTemplate = `{
                 }
             }
         },
+        "api.GetClassLecturesHandler.response": {
+            "type": "object",
+            "properties": {
+                "lectures": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.APILectureBasic"
+                    }
+                }
+            }
+        },
+        "api.GetClassProblemsHandler.response": {
+            "type": "object",
+            "properties": {
+                "problems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.APIProblemBasic"
+                    }
+                }
+            }
+        },
         "api.GetClassesHandler.response": {
             "type": "object",
             "properties": {
@@ -746,6 +1200,118 @@ const docTemplate = `{
                 },
                 "count": {
                     "type": "integer"
+                }
+            }
+        },
+        "api.GetLectureHandler.response": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "$ref": "#/definitions/entities.APILectureAdvanced"
+                }
+            }
+        },
+        "api.GetProblemsHandler.response": {
+            "type": "object",
+            "properties": {
+                "classes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.APIProblemBasic"
+                    }
+                },
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.GetUserClassesHandler.response": {
+            "type": "object",
+            "properties": {
+                "classes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ClassBasic"
+                    }
+                }
+            }
+        },
+        "auth.BearerToken": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.LoginHandler.request": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.APILectureAdvanced": {
+            "type": "object",
+            "properties": {
+                "class_id": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lecture_content": {
+                    "type": "string"
+                },
+                "lecture_description": {
+                    "type": "string"
+                },
+                "lecture_name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.APILectureBasic": {
+            "type": "object",
+            "properties": {
+                "class_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lecture_description": {
+                    "type": "string"
+                },
+                "lecture_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.APIProblemBasic": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "problem_name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -789,6 +1355,60 @@ const docTemplate = `{
                 },
                 "lectureID": {
                     "type": "integer"
+                }
+            }
+        },
+        "entities.Problem": {
+            "type": "object",
+            "properties": {
+                "class": {
+                    "$ref": "#/definitions/ClassFields"
+                },
+                "classID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "problemContent": {
+                    "$ref": "#/definitions/entities.ProblemContent"
+                },
+                "problemName": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.ProblemContent": {
+            "type": "object",
+            "properties": {
+                "statement": {
+                    "type": "string"
+                },
+                "testcases": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.TestCase"
+                    }
+                }
+            }
+        },
+        "entities.TestCase": {
+            "type": "object",
+            "properties": {
+                "input": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
                 }
             }
         },

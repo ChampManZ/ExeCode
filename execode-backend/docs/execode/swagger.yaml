@@ -28,6 +28,10 @@ definitions:
         type: string
       id:
         type: integer
+      lectures:
+        items:
+          $ref: '#/definitions/entities.Lecture'
+        type: array
       updatedAt:
         type: string
     type: object
@@ -197,14 +201,32 @@ definitions:
   api.CreateLectureHandler.response:
     properties:
       result:
-        $ref: '#/definitions/entities.Lecture'
+        $ref: '#/definitions/entities.APILectureAdvanced'
     type: object
-  api.DeleteClassHandler.request:
+  api.CreateProblemHandler.request:
     properties:
       class_id:
         type: integer
+      content:
+        type: string
+      problem_name:
+        type: string
+      testcases:
+        items:
+          $ref: '#/definitions/entities.TestCase'
+        type: array
+    type: object
+  api.CreateProblemHandler.response:
+    properties:
+      result:
+        $ref: '#/definitions/entities.Problem'
     type: object
   api.DeleteClassHandler.response:
+    properties:
+      status:
+        type: string
+    type: object
+  api.DeleteProblemHandler.response:
     properties:
       status:
         type: string
@@ -214,6 +236,20 @@ definitions:
       message:
         type: string
     type: object
+  api.GetClassLecturesHandler.response:
+    properties:
+      lectures:
+        items:
+          $ref: '#/definitions/entities.APILectureBasic'
+        type: array
+    type: object
+  api.GetClassProblemsHandler.response:
+    properties:
+      problems:
+        items:
+          $ref: '#/definitions/entities.APIProblemBasic'
+        type: array
+    type: object
   api.GetClassesHandler.response:
     properties:
       classes:
@@ -222,6 +258,78 @@ definitions:
         type: array
       count:
         type: integer
+    type: object
+  api.GetLectureHandler.response:
+    properties:
+      result:
+        $ref: '#/definitions/entities.APILectureAdvanced'
+    type: object
+  api.GetProblemsHandler.response:
+    properties:
+      classes:
+        items:
+          $ref: '#/definitions/entities.APIProblemBasic'
+        type: array
+      count:
+        type: integer
+    type: object
+  api.GetUserClassesHandler.response:
+    properties:
+      classes:
+        items:
+          $ref: '#/definitions/ClassBasic'
+        type: array
+    type: object
+  auth.BearerToken:
+    properties:
+      token:
+        type: string
+    type: object
+  auth.LoginHandler.request:
+    properties:
+      password:
+        type: string
+      user_name:
+        type: string
+    type: object
+  entities.APILectureAdvanced:
+    properties:
+      class_id:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      lecture_content:
+        type: string
+      lecture_description:
+        type: string
+      lecture_name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entities.APILectureBasic:
+    properties:
+      class_id:
+        type: integer
+      id:
+        type: integer
+      lecture_description:
+        type: string
+      lecture_name:
+        type: string
+    type: object
+  entities.APIProblemBasic:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      problem_name:
+        type: string
+      updated_at:
+        type: string
     type: object
   entities.Lecture:
     properties:
@@ -250,6 +358,41 @@ definitions:
         type: string
       lectureID:
         type: integer
+    type: object
+  entities.Problem:
+    properties:
+      class:
+        $ref: '#/definitions/ClassFields'
+      classID:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      problemContent:
+        $ref: '#/definitions/entities.ProblemContent'
+      problemName:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entities.ProblemContent:
+    properties:
+      statement:
+        type: string
+      testcases:
+        items:
+          $ref: '#/definitions/entities.TestCase'
+        type: array
+    type: object
+  entities.TestCase:
+    properties:
+      input:
+        type: string
+      output:
+        type: string
     type: object
   main.healthCheck.response:
     properties:
@@ -283,30 +426,6 @@ paths:
       tags:
       - Health
   /classes:
-    delete:
-      parameters:
-      - description: ID of class to delete
-        in: body
-        name: ClassID
-        required: true
-        schema:
-          $ref: '#/definitions/api.DeleteClassHandler.request'
-      responses:
-        "200":
-          description: Describes the result of the execution
-          schema:
-            $ref: '#/definitions/api.DeleteClassHandler.response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/api.ErrorResponse'
-      summary: Delete class specified by class_id
-      tags:
-      - Classes
     get:
       description: Gets all classes, set page size and page number through query parameters.
       parameters:
@@ -358,7 +477,78 @@ paths:
       summary: Creates the class defined by the request
       tags:
       - Classes
+  /classes/{ClassID}/lectures:
+    get:
+      parameters:
+      - description: Class ID to query
+        in: path
+        name: ClassID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Describes lecture created
+          schema:
+            $ref: '#/definitions/api.GetClassLecturesHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get lectures belonging to class
+      tags:
+      - Lectures
+  /classes/{ClassID}/problems:
+    get:
+      parameters:
+      - description: Class ID to query
+        in: path
+        name: ClassID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Describes lecture created
+          schema:
+            $ref: '#/definitions/api.GetClassProblemsHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get lectures belonging to class
+      tags:
+      - Lectures
   /classes/{classID}:
+    delete:
+      parameters:
+      - description: ID of class to delete
+        in: path
+        name: ClassID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Describes the result of the execution
+          schema:
+            $ref: '#/definitions/api.DeleteClassHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Delete class specified by class_id
+      tags:
+      - Classes
     get:
       description: Gets all classes, set page size and page number through query parameters.
       parameters:
@@ -448,6 +638,192 @@ paths:
       summary: Create lecture for class specified by class_id
       tags:
       - Lectures
+  /lectures/{LectureID}:
+    delete:
+      parameters:
+      - description: LectureID to get
+        in: path
+        name: LectureID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Describes lecture created
+          schema:
+            $ref: '#/definitions/api.GetLectureHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get Lecture specified by lecture_id
+      tags:
+      - Lectures
+    get:
+      parameters:
+      - description: LectureID to get
+        in: path
+        name: LectureID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Describes lecture created
+          schema:
+            $ref: '#/definitions/api.GetLectureHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get Lecture specified by lecture_id
+      tags:
+      - Lectures
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates with basic authentication return a JWT token
+      parameters:
+      - description: Description of the user to created
+        in: body
+        name: loginCredentials
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginHandler.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Describes the created user
+          schema:
+            $ref: '#/definitions/auth.BearerToken'
+      summary: Login endpoint
+      tags:
+      - Authentication
+  /problems:
+    get:
+      description: Gets all classes, set page size and page number through query parameters.
+      parameters:
+      - default: 1
+        description: Page size to return
+        in: query
+        name: offset
+        type: integer
+      - default: 10
+        description: Page to return
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: Describes the result of the execution
+          schema:
+            $ref: '#/definitions/api.GetProblemsHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Gets all classes (paged)
+      tags:
+      - Problems
+    post:
+      parameters:
+      - description: Describes lecture to be created
+        in: body
+        name: ProblemDescription
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateProblemHandler.request'
+      responses:
+        "200":
+          description: Describes lecture created
+          schema:
+            $ref: '#/definitions/api.CreateProblemHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Create lecture for class specified by class_id
+      tags:
+      - Problems
+  /problems/{ProblemID}:
+    delete:
+      parameters:
+      - description: ProblemID to delete
+        in: path
+        name: ProblemID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Describes lecture created
+          schema:
+            $ref: '#/definitions/api.DeleteProblemHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get Lecture specified by problem_id
+      tags:
+      - Problems
+    get:
+      parameters:
+      - description: LectureID to get
+        in: path
+        name: ProblemID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Describes lecture created
+          schema:
+            $ref: '#/definitions/api.GetLectureHandler.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get Lecture specified by lecture_id
+      tags:
+      - Problems
+  /refresh:
+    get:
+      consumes:
+      - application/json
+      description: Provides a new access token given that there is a valid refresh-token
+        cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Describes the created user
+          schema:
+            $ref: '#/definitions/auth.BearerToken'
+      summary: Refresh endpoint
+      tags:
+      - Authentication
   /users:
     get:
       description: Gets all users, set page size and page number through query parameters.
@@ -483,6 +859,11 @@ paths:
       - application/json
       description: Creates the user defined by the request
       parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Description of the user to created
         in: body
         name: UserDescription
@@ -496,17 +877,19 @@ paths:
           description: Describes the created user
           schema:
             $ref: '#/definitions/CreateUserResult'
+      security:
+      - ApiKeyAuth: []
       summary: Creates the user defined by the request
       tags:
       - Users
-  /users/{username}:
+  /users/{userID}:
     get:
       description: Queries only one user resulting from the specified username
       parameters:
       - description: Username to query
         in: path
-        name: username
-        type: string
+        name: userID
+        type: integer
       responses:
         "200":
           description: Describes the user entity
@@ -520,6 +903,26 @@ paths:
       summary: Gets single user defined by username parameter
       tags:
       - Users
+  /users/{userID}/classes:
+    get:
+      parameters:
+      - description: username of user to query
+        in: path
+        name: userID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Describes the result of the execution
+          schema:
+            $ref: '#/definitions/api.GetUserClassesHandler.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get user class specified by class_id
+      tags:
+      - Classes
 schemes:
 - http
 swagger: "2.0"

@@ -24,13 +24,13 @@ type APIClassBasic struct {
 } // @name ClassBasic
 
 type APIClassAdvanced struct {
-	ID               uint           `json:"id"`
-	CreatedAt        time.Time      `json:"created_at"`
-	UpdatedAt        time.Time      `json:"updated_at"`
-	DeletedAt        gorm.DeletedAt `json:"deleted_at" swaggertype:"string"`
-	ClassName        string         `json:"class_name"`
-	ClassDescription string         `json:"class_description"`
-	User             []APIUserBasic `json:"users" gorm:"many2many:class_lecturer;joinForeignKey:class_id;References:id;joinReferences:user_id"`
+	ID               uint              `json:"id"`
+	CreatedAt        time.Time         `json:"created_at"`
+	UpdatedAt        time.Time         `json:"updated_at"`
+	ClassName        string            `json:"class_name"`
+	ClassDescription string            `json:"class_description"`
+	User             []APIUserBasic    `json:"users" gorm:"many2many:class_lecturer;joinForeignKey:class_id;References:id;joinReferences:user_id"`
+	Lectures         []APILectureBasic `json:"lectures" gorm:"references:"`
 } // @name ClassAdvanced
 
 type ClassList []Class
@@ -47,6 +47,14 @@ func (cs ClassList) Basic() []APIClassBasic {
 	return ret
 }
 
+func (cs ClassList) Advanced() []APIClassAdvanced {
+	ret := make([]APIClassAdvanced, len(cs))
+	for i, c := range cs {
+		ret[i] = c.Advanced()
+	}
+	return ret
+}
+
 func (c Class) Advanced() APIClassAdvanced {
 	return APIClassAdvanced{
 		ID:               c.ID,
@@ -54,7 +62,8 @@ func (c Class) Advanced() APIClassAdvanced {
 		UpdatedAt:        c.UpdatedAt,
 		ClassName:        c.ClassName,
 		ClassDescription: c.ClassDescription,
-		User:             UserList(c.User).Advanced(),
+		User:             UserList(c.User).Basic(),
+		Lectures:         LectureList(c.Lectures).Basic(),
 	}
 }
 
@@ -62,17 +71,23 @@ func GetClassByID(id uint, fields ...string) (Class, error) {
 	class := Class{}
 	class.ID = id
 	var err error
-	if err = db.Model(&class).Select(fields).Where(&class).First(&class).Error; err != nil {
+	if err = db.Preload("User").Preload("Lectures").Select(fields).Where(&class).First(&class).Error; err != nil {
 		return Class{}, err
 	}
 
-	if err = db.Model(&class).Association("User").Find(&class.User); err != nil {
-		return Class{}, err
-	}
 	return class, err
 }
 
 func DeleteClass(id uint) error {
-	err := db.Delete(&Class{}, id).Error
+	err := db.Delete(&Class{ID: id}).Error
 	return err
+}
+
+func GetUserClasses(username string) (classes ClassList, err error) {
+	user := User{UserName: username}
+	if err = db.Select("id").Where(&user).First(&user).Error; err != nil {
+		return
+	}
+	err = db.Model(&user).Association("Class").Find(&classes)
+	return
 }
