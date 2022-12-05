@@ -41,7 +41,7 @@ const rows = [
   createData('Database Technology', 'Complete Module 6', Date()),
 ];
 
-export default function CustomizedTables() {
+export default function CustomizedTables(props) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">

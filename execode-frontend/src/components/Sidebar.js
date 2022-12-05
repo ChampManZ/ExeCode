@@ -74,7 +74,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 
-export default function PersistentDrawerLeft() {
+export default function PersistentDrawerLeft(props) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -133,7 +133,7 @@ export default function PersistentDrawerLeft() {
         <List>
           {/* home */}
           <ListItem disablePadding>
-            <ListItemButton href="/">
+            <ListItemButton href="/home">
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>

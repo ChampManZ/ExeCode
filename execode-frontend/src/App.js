@@ -4,15 +4,17 @@ import AllCourse from "./pages/AllCourse";
 import Home from "./pages/Home";
 import ModuleCourse from "./pages/ModuleCourse";
 import HomeCourse from './pages/HomeCourse';
-import LectureHome from './pages/LectureHome'
-
+import LectureHome from './pages/LectureHome';
+import Welcome from './pages/Welcome';
 
 function App() {
+
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Home />} />
+          <Route path='/' element={<Welcome />}/>
+          <Route path='/home' element={<Home />} />
           <Route path='/courses'>
             <Route index element={<AllCourse />} />
             <Route path=":id">
