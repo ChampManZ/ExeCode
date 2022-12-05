@@ -1,7 +1,12 @@
 import CoderunnerInput from './CoderunnerInput';
 import Select from 'react-select';
+import { useState } from 'react';
 
-const CoderunnerHeader = () => {
+const CoderunnerHeader = (props) => {
+
+    const [selectedOption, setSelectedOption] = useState('');
+
+    props.sendData(selectedOption)
 
     const codeRunnerHeadingStyle = {
         display: "flex",
@@ -14,24 +19,15 @@ const CoderunnerHeader = () => {
     // langOptions will be use to display dropdown available programming language
     // Addition, we will use React Select library to enhance our code/workflow
     const langOptions = [
-        { value: 'bash', label: 'Bash' },
         { value: 'c', label: 'C' },
-        { value: 'c++', label: 'C++' },
+        { value: 'cpp', label: 'C++' },
         { value: 'csharp', label: 'C#' },
-        { value: 'dart', label: 'Dart' },
         { value: 'go', label: 'Go' },
-        { value: 'java', label: 'Java' },
-        { value: 'javascript', label: 'JavaScript' },
+        { value: 'js', label: 'JavaScript' },
         { value: 'kotlin', label: 'Kotlin' },
         { value: 'lua', label: 'Lua' },
-        { value: 'php', label: 'php' },
         { value: 'python', label: 'Python3' },
         { value: 'python2', label: 'Python2' },
-        { value: 'ruby', label: 'Ruby' },
-        { value: 'rust', label: 'Rust' },
-        { value: 'scala', label: 'Scala' },
-        { value: 'sqlite3', label: 'SQLite3' },
-        { value: 'swift', label: 'Swift' },
         { value: 'typescript', label: 'TypeScript' },
     ]
 
@@ -40,7 +36,7 @@ const CoderunnerHeader = () => {
         <CoderunnerInput />
         <div id='lang-dropdown'>
             <label>Language: </label>
-            <Select value={langOptions.value} options={langOptions} defaultValue={langOptions[7]} />
+            <Select value={langOptions.value} onChange={setSelectedOption} options={langOptions} defaultValue={selectedOption} />
         </div>
     </header>
   )

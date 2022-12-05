@@ -20,7 +20,7 @@ const paramsObj = { grant_type: "authorization_code", client_id: "5ujg8c9bbiihtt
 const params = new URLSearchParams(paramsObj);
 const headerAdd = {
     headers: {
-        'Authorization': 'Basic NXVqZzhjOWJiaWlodHRiMWdkc2lqajQ4dDA6ZmY4ZGc5M3ZwOGpha2o5YmVhdms2NGY5MWZvOXFjMzhsZjg2dXV1cWhvczFwOGNmOHVo'
+        'Authorization': `Basic NXVqZzhjOWJiaWlodHRiMWdkc2lqajQ4dDA6ZmY4ZGc5M3ZwOGpha2o5YmVhdms2NGY5MWZvOXFjMzhsZjg2dXV1cWhvczFwOGNmOHVo`
     }
 }
 
@@ -29,7 +29,7 @@ axios.post('https://execode-users.auth.us-east-1.amazoncognito.com/oauth2/token'
     extractData(res.data.id_token)
     postUser(res.data.access_token)
 })
-.catch(err => console.log(err));
+.catch(err => console.log('Failed to get token'));
 
 // Extract Data
 function extractData(myToken) {
@@ -42,7 +42,6 @@ function extractData(myToken) {
 }
 
 // Post data
-console.log(userdata)
 const postUser = function (token) {
     axios.post('http://localhost:3000/users', userdata, {
         headers: {

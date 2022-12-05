@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar"
 import Split from "react-split"
 import "../styles/splitter.css"
 import { Box } from "@mui/system"
+import { useState } from "react"
 
 const flexboxStyle = {
   display: "flex",
@@ -16,21 +17,31 @@ const bottomBorderStyle = {
   borderBottom: "1px solid #E5E5E5"
 }
 
-function Coderunner() {
+function Coderunner(props) {
+  const [data, setData] = useState('')
+  const [output, setOutput] = useState('')
+
+  const sendData = (data) => {
+    setData(data)
+  }
+
+  const outputData = (output) => {
+    setOutput(output)
+  }
+
   return (
     <>
     
     <Sidebar></Sidebar>
     <Box sx={{ mt:15 }}>
-      <CoderunnerHeader />
+      <CoderunnerHeader sendData={sendData} />
       <Split sizes={[10, 70, 20]} cursor="col-resize" direction="horizontal" style={flexboxStyle}>
           <CoderunnerTestcase />
-          <CoderunnerEditor />
-          <CoderunnerOutput />
+          <CoderunnerEditor data={data} outputData={outputData} />
+          <CoderunnerOutput output={output} />
       </Split>
       <div style={bottomBorderStyle} />
     </Box>
-    
     </>
     
   )

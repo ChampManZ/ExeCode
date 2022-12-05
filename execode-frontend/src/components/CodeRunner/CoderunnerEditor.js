@@ -18,18 +18,41 @@ const divBtnStyle = {
   padding: "10px 4px"
 }
 
-function CoderunnerEditor() {
+function CoderunnerEditor(props) {
 
   const [code, setCode] = useState("console.log('Hello, World')")
   const onChange = React.useCallback((value, viewUpdate) => {
     setCode(value)
   }, []);
 
+  const version = {
+    c: "10.2.0",
+    cpp: "10.2.0",
+    csharp: "6.12.0",
+    go: "1.16.2",
+    js: "16.3.0",
+    kotlin: "1.4.31",
+    lua: "5.4.2",
+    python: "3.10.0",
+    python2: "2.7.18",
+    typescript: "4.2.3"
+  }
+
+
   // Don't forget to provide here
-  const submissionURL = ""
+  const submissionURL = "https://emkc.org/api/v2/piston/execute"
   const submitCode = () => {
-    axios.post(submissionURL, {code}).then((res) => console.log(res))
-    console.log(code)
+    axios.post(submissionURL, {
+      "language": props.data.value,
+      "version": version[props.data.value],
+      "files": [
+          {
+              "name": "",
+              "content": code
+          }
+      ]
+    })
+    .then((res) => props.outputData(res))
   }
 
   return (
