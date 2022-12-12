@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import modules from './AllModule';
+import lecture1 from '../file/Lecture-01.pdf'
 
 export default function ModulesBody() {
     const [open, setOpen] = React.useState(false);
@@ -43,11 +44,12 @@ export default function ModulesBody() {
                                     <Box sx={{ margin: 1 }}>
                                         <Table size="small" aria-label="lectures">
                                             <TableBody>
-                                                {modules.map(function(lecture){
+                                                {/* {modules.map(function(lecture){
                                                     return(
                                                         <TableRow key={lecture.name}> {lecture.detail}</TableRow>  
                                                     )
-                                                })}
+                                                })} */}
+                                                <a href={lecture1} target='_blank' rel='noreferrer'></a>
                                             </TableBody> 
                                         </Table>
                                     
