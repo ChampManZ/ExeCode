@@ -9,7 +9,7 @@ export default function CourseMenu() {
             <Toolbar position="sticky">
                 <List>
                     <ListItem>
-                        <ListItemButton href="/courses">
+                        <ListItemButton href="/courses/1">
                             <ListItemText primary="Course"/>
                         </ListItemButton>
                     </ListItem>

@@ -20,7 +20,7 @@ const divBtnStyle = {
 
 function CoderunnerEditor(props) {
 
-  const [code, setCode] = useState("console.log('Hello, World')")
+  const [code, setCode] = useState("console.log('Hello, World')\n")
 
   const onChange = React.useCallback((value, viewUpdate) => {
     setCode(value)
@@ -59,7 +59,7 @@ function CoderunnerEditor(props) {
 
   return (
     <div>
-        <CodeMirror 
+        <CodeMirror className='editor-main'
             value={code}
             height="750px"
             width='auto'

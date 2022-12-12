@@ -36,7 +36,7 @@ const CoderunnerHeader = (props) => {
         <CoderunnerInput />
         <div id='lang-dropdown'>
             <label>Language: </label>
-            <Select value={langOptions.value} onChange={setSelectedOption} options={langOptions} defaultValue={selectedOption} />
+            <Select className='language-select' value={langOptions.value} onChange={setSelectedOption} options={langOptions} defaultValue={selectedOption} />
         </div>
     </header>
   )

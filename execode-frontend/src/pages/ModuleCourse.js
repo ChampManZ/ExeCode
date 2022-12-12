@@ -1,7 +1,7 @@
 import Sidebar from "../components/Sidebar"
 import CourseMenu from "../components/Course/CourseMenu"
 import HeadNav from "../components/Module/HeadNav"
-import ModulesBody from "../components/Module/ModulesBody"
+// import ModulesBody from "../components/Module/ModulesBody"
 import '../styles/module.css'
 import { Stack } from "@mui/material"
 
