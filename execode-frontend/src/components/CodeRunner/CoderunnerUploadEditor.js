@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 import CodeMirror from '@uiw/react-codemirror'
 import CoderunnerBtn from './CoderunnerBtn'
 
@@ -16,19 +16,36 @@ const divPaddingStyle = {
     padding: "20px 2px"
 }
 
-function CoderunnerUploadEditor() {
+function CoderunnerUploadEditor(props) {
 
     const [isClick, setIsClick] = useState(false)
+    const [stateTestCases, setStateTestCases] = useState([])
+    const [myLength, setMyLength] = useState(0)
+    let testCases = []
     const [code, setCode] = useState("// Write your test case function here")
+
     const onChange = React.useCallback((value, viewUpdate) => {
       setCode(value)
     }, []);
     
-    const testCaseURL = ""
+    // const testCaseURL = ""
     const submitTestCase = () => {
-        axios.post(testCaseURL, {code}).then((res) => console.log(res))
+        testCases = code.split(";")
+
+        setStateTestCases(testCases)
         setIsClick(false)
+        setMyLength(testCases.length)
+        console.log(testCases)
+        console.log(testCases[0])
     }
+
+    const allTestCase = stateTestCases.map((element, key) => {
+        return (
+            <div key={key}>
+                <p>{element}</p>
+            </div>
+        )
+    })
 
     return (
         <div>
@@ -44,6 +61,8 @@ function CoderunnerUploadEditor() {
             </div> :
             <CoderunnerBtn name="Add Test Case" style={uploadBtnStyle} clickFunc={(event) => { setIsClick(true) }} />
             }
+            {`Input n = ${myLength}`}
+            {allTestCase}
         </div>
     )
 }
