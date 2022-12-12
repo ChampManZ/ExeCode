@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import PropTypes from 'prop-types';
+
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
+import {Table, TableBody, TableCell, TableContainer, TableRow} from '@mui/material';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import modules from './AllModule';
-import lecture1 from '../file/Lecture-01.pdf'
+import '../../styles/module.css'
 
 export default function ModulesBody() {
     const [open, setOpen] = React.useState(false);
@@ -33,8 +32,9 @@ export default function ModulesBody() {
                             </TableCell>
 
                             <TableCell key={i} component="th" scope="row">
-                                {module.name}
+                                <h2 className='module-h2'>{module.name}</h2>
                             </TableCell> 
+                            
                             </>
                         </TableRow>
 
@@ -44,12 +44,14 @@ export default function ModulesBody() {
                                     <Box sx={{ margin: 1 }}>
                                         <Table size="small" aria-label="lectures">
                                             <TableBody>
-                                                {/* {modules.map(function(lecture){
+                                                {modules.map(function(lecture, i){
                                                     return(
-                                                        <TableRow key={lecture.name}> {lecture.detail}</TableRow>  
+                                                        <TableRow key={i}> 
+                                                            <a className='module-body' href={lecture.link} target='_blank' rel='noreferrer'>{lecture.detail}</a>
+                                                            
+                                                        </TableRow>  
                                                     )
-                                                })} */}
-                                                <a href={lecture1} target='_blank' rel='noreferrer'></a>
+                                                })}
                                             </TableBody> 
                                         </Table>
                                     

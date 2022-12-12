@@ -9,7 +9,7 @@ export default function CourseMenu() {
             <Toolbar position="sticky">
                 <List>
                     <ListItem>
-                        <ListItemButton href="/courses">
+                        <ListItemButton href="/courses/1">
                             <ListItemText primary="Course"/>
                         </ListItemButton>
                     </ListItem>
@@ -20,11 +20,7 @@ export default function CourseMenu() {
                         </ListItemButton>
                     </ListItem>
 
-                    {/* <ListItem>
-                        <ListItemButton>
-                            <ListItemText primary="Assignment"/>
-                        </ListItemButton>
-                    </ListItem> */}
+            
                 </List>
             </Toolbar>
         </Box>
