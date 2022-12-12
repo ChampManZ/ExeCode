@@ -21,11 +21,11 @@ export default function CourseMenu() {
                         </ListItemButton>
                     </ListItem>
 
-                    <ListItem>
+                    {/* <ListItem>
                         <ListItemButton>
                             <ListItemText primary="Assignment"/>
                         </ListItemButton>
-                    </ListItem>
+                    </ListItem> */}
                 </List>
             </Toolbar>
         </Box>
