@@ -16,7 +16,7 @@ export default function CourseMenu() {
                     </ListItem>
 
                     <ListItem>
-                        <ListItemButton href="module">
+                        <ListItemButton href="1/module">
                             <ListItemText primary="Modules"/>
                         </ListItemButton>
                     </ListItem>
