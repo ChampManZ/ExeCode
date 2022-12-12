@@ -20,7 +20,6 @@ const bottomBorderStyle = {
 function Coderunner(props) {
   const [data, setData] = useState('')
   const [output, setOutput] = useState('')
-  const [testCases, setTestCase] = useState([])
 
   const sendData = (data) => {
     setData(data)
@@ -30,19 +29,15 @@ function Coderunner(props) {
     setOutput(output)
   }
 
-  const sendTestCase = (testCases) => {
-    setTestCase(testCases)
-  }
-
   return (
     <>
     
     <Sidebar></Sidebar>
     <Box sx={{ mt:15 }}>
       <CoderunnerHeader sendData={sendData} />
-      <Split sizes={[20, 60, 20]} cursor="col-resize" direction="horizontal" style={flexboxStyle}>
-          <CoderunnerTestcase sendTestCase={sendTestCase} />
-          <CoderunnerEditor data={data} outputData={outputData} testCases={testCases} />
+      <Split sizes={[10, 70, 20]} cursor="col-resize" direction="horizontal" style={flexboxStyle}>
+          <CoderunnerTestcase />
+          <CoderunnerEditor data={data} outputData={outputData} />
           <CoderunnerOutput output={output} />
       </Split>
       <div style={bottomBorderStyle} />

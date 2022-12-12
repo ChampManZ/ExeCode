@@ -21,7 +21,6 @@ const divBtnStyle = {
 function CoderunnerEditor(props) {
 
   const [code, setCode] = useState("console.log('Hello, World')")
-
   const onChange = React.useCallback((value, viewUpdate) => {
     setCode(value)
   }, []);
@@ -39,6 +38,7 @@ function CoderunnerEditor(props) {
     typescript: "4.2.3"
   }
 
+
   // Don't forget to provide here
   const submissionURL = "https://emkc.org/api/v2/piston/execute"
   const submitCode = () => {
@@ -50,9 +50,7 @@ function CoderunnerEditor(props) {
               "name": "",
               "content": code
           }
-      ],
-      "stdin": "",
-      "args": props.testCases
+      ]
     })
     .then((res) => props.outputData(res))
   }
