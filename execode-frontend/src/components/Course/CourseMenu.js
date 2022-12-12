@@ -1,10 +1,9 @@
 import { ListItem, ListItemButton, ListItemText, Toolbar } from '@mui/material';
-// import { useParams } from "react-router-dom"
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 
 export default function CourseMenu() {
-    // const {id} = useParams()
+ 
     return (
         <Box flex={1} sx={{mt:10}}>
             <Toolbar position="sticky">
@@ -21,11 +20,11 @@ export default function CourseMenu() {
                         </ListItemButton>
                     </ListItem>
 
-                    <ListItem>
+                    {/* <ListItem>
                         <ListItemButton>
                             <ListItemText primary="Assignment"/>
                         </ListItemButton>
-                    </ListItem>
+                    </ListItem> */}
                 </List>
             </Toolbar>
         </Box>

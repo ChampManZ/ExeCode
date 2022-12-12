@@ -26,7 +26,8 @@ export default function Course() {
                   <>
                   <Typography gutterBottom variant="h5" component="div">
                     {course.name}
-                  </Typography><Typography variant="body2" color="text.secondary">
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
                     {course.description}
                   </Typography>
                   </>

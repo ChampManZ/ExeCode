@@ -8,6 +8,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 
 
+
 export default function Modules () {
     const Accordion = styled((props) => (
         <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -54,23 +55,11 @@ export default function Modules () {
       }));
     
     return (
-        <Box>
+        <>
+        <Box sx={{mb:5}}>
             <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')} >
                 <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Collapsible Group Item #1</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                <Typography>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                    malesuada lacus ex, sit amet blandit leo lobortis eget. Lorem ipsum dolor
-                    sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                    sit amet blandit leo lobortis eget.
-                </Typography>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-                <Typography>Collapsible Group Item #2</Typography>
+                <Typography>Module 1</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                 <Typography>
@@ -82,19 +71,36 @@ export default function Modules () {
                 </AccordionDetails>
             </Accordion>
         </Box>
+        
+        <Box>
+            <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+                <Typography>Module 2</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                    malesuada lacus ex, sit amet blandit leo lobortis eget. Lorem ipsum dolor
+                    sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
+                    sit amet blandit leo lobortis eget.
+                </Typography>
+                </AccordionDetails>
+            </Accordion>
+        </Box>
+        </>
 
     )
 
 }
 
 
-const data = [
-    {
-        module: 'Module 1',
-        topic: "Introduction"
-    },
-    {
-        module: 'Module 2',
-        topic: "Data structure"
-    }
-]
+// const data = [
+//     {
+//         module: 'Module 1',
+//         topic: "Introduction"
+//     },
+//     {
+//         module: 'Module 2',
+//         topic: "Data structure"
+//     }
+// ]
