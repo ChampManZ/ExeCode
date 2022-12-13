@@ -79,17 +79,15 @@ func (e Env) JwtConfig() middleware.JWTConfig {
 		signingKeys[cognitoPubJWK[i].KeyID()] = pubkey
 	}
 	return middleware.JWTConfig{
-		// TODO: Fix this
-		// SigningKey: &SigningPrivateKey.PublicKey,
 		SigningKeys:   signingKeys,
 		SigningMethod: "RS256",
 		Skipper: func(c echo.Context) bool {
 			// Allow GET requests to all endpoints
-
 			if c.Path() == "/login" {
 				return true
-			}
-			if c.Request().Method == "GET" {
+			} else if c.Path() == "/pdflecture" {
+				return true
+			} else if c.Request().Method == "GET" {
 				return true
 			}
 

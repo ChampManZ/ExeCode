@@ -24,7 +24,7 @@ import (
 // @version     1.0
 // @description API for Execode code learning environment
 
-// @host     localhost:8080
+// @host     localhost:3000
 // @BasePath /
 // @schemes  http
 func main() {
@@ -55,6 +55,11 @@ func main() {
 		log.Fatalf("failed to initialize keys: %v", err)
 	}
 
+	path := "_local/pdf-lectures"
+	err = os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		log.Fatalf("failed to initialize fileserver: %v", err)
+	}
 	fmt.Println("Starting server...")
 
 	// Setup
@@ -62,6 +67,7 @@ func main() {
 	e.Logger.SetLevel(log.DEBUG)
 
 	e.Use(middleware.JWTWithConfig(authEnv.JwtConfig()))
+	e.Use(middleware.CORS())
 
 	// e.POST("/login", auth.LoginHandler)
 	// e.GET("/refresh", auth.RefreshHandler)
@@ -72,7 +78,7 @@ func main() {
 	// CRUD apis
 	e.POST("/users", api.CreateUserHandler)
 	e.GET("/users", api.GetUsersHandler)
-	e.GET("/users/:userID", api.GetUserHandler)
+	e.GET("/users/:username", api.GetUserHandler)
 
 	e.POST("/classes", api.CreateClassHandler)
 	e.GET("/classes", api.GetClassesHandler)
@@ -84,6 +90,9 @@ func main() {
 	e.GET("/classes/:class/lectures", api.GetClassLecturesHandler)
 	e.GET("/lectures/:lectureID", api.GetLectureHandler)
 	e.DELETE("/lectures/:lectureID", api.DeleteLectureHandler)
+
+	e.POST("/pdflecture", api.UploadPDFLecture)
+	e.GET("/courses", api.GetCourses)
 
 	e.POST("/problems", api.CreateProblemHandler)
 	e.GET("/problems", api.GetProblemsHandler)

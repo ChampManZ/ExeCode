@@ -82,16 +82,16 @@ func GetUsersHandler(c echo.Context) error {
 // @Summary     Gets single user defined by username parameter
 // @Description Queries only one user resulting from the specified username
 // @Tags        Users
-// @Param       userID path     uint                      false "Username to query"
+// @Param       username path     string                      false "Username to query"
 // @Success     200      {object} swaggercompat.Response{result=swaggercompat.UserAdvanceWithRelation} "Describes the user entity"
-// @Router      /users/{userID} [get]
+// @Router      /users/{username} [get]
 func GetUserHandler(c echo.Context) error {
-	userID := c.Param("userID")
-	uid, err := strconv.ParseUint(userID, 10, 64)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, ErrorResponse{"invalid class ID"})
-	}
-	user, err := entities.GetUserByUserID(uint(uid))
+	username := c.Param("username")
+	// uid, err := strconv.ParseUint(userID, 10, 64)
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, ErrorResponse{"invalid class ID"})
+	// }
+	user, err := entities.GetUserByUsername(username)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{err.Error()})
 	}
@@ -526,4 +526,26 @@ func DeleteProblemHandler(c echo.Context) error {
 		Status string `json:"status"`
 	}
 	return c.JSON(http.StatusOK, response{"success"})
+}
+
+func UploadPDFLecture(c echo.Context) error {
+	c.Request().ParseMultipartForm(10 << 20)
+	fileName := c.FormValue("fileName")
+	className := c.FormValue("className")
+	lectureFile := c.FormValue("lecture-file")
+	module := c.FormValue("module")
+	// fmt.Println(handler.Header.Get("Content-Type"))
+	entities.UploadPDFController(fileName, className, module, lectureFile)
+	return c.JSON(http.StatusOK, struct {
+		Status string `json:"status"`
+	}{"success"})
+}
+
+func GetCourses(c echo.Context) error {
+	courses, err := entities.GetCourses()
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, courses)
 }

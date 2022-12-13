@@ -38,6 +38,7 @@ func AutoMigrate() error {
 		&LectureContent{},
 		&ProblemContent{},
 		&TestCase{},
+		&PDFLecture{},
 	)
 	if db.Error != nil {
 		return db.Error
