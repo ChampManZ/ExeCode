@@ -13,14 +13,20 @@ import jwt_decode from "jwt-decode";
 var userdata = {}
 
 // Get code to gain token
+
+// หลังจากนี้ ถ้านายได้มามุดดูโค้ดนี้อีก ให้เปลี่ยน secret แล้วซ่อนมันด้วยนะ
+// จากแชมป์ถึงตัวเองและเพื่อนๆ
+const client_id = ""
+const headers_authorization = ""
+
 const queryParameters = new URLSearchParams(window.location.search);
 const code = queryParameters.get("code");
 
-const paramsObj = { grant_type: "authorization_code", client_id: "5ujg8c9bbiihttb1gdsijj48t0", redirect_uri: "http://localhost:3001/home", code: code };
+const paramsObj = { grant_type: "authorization_code", client_id: client_id, redirect_uri: "http://localhost:3001/home", code: code };
 const params = new URLSearchParams(paramsObj);
 const headerAdd = {
     headers: {
-        'Authorization': `Basic NXVqZzhjOWJiaWlodHRiMWdkc2lqajQ4dDA6ZmY4ZGc5M3ZwOGpha2o5YmVhdms2NGY5MWZvOXFjMzhsZjg2dXV1cWhvczFwOGNmOHVo`
+        'Authorization': headers_authorization
     }
 }
 
