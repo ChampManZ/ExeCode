@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios from 'axios'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -8,9 +9,19 @@ import { CardActionArea } from '@mui/material';
 import courses from './Courses';
 
 export default function Course() {
+  // axios.get("http://localhost:3000/courses")
+  //   .then(res => {
+  //     console.log(res.data)
+  //     res.data.forEach((obj, index) => {
+  //       let course = {id: (6+index), name: obj.ClassName, description: ""}
+  //       courses.push(course)
+  //     })
+  //   })
+
+  // console.log(courses)
   return (
     <>
-    <Grid container columnSpacing={5} rowSpacing={5}>
+    <Grid container columnSpacing={5} rowSpacing={8}>
       {courses.map(function(course) {
         return (
           <Grid item sm={6} md={4} lg={3}>

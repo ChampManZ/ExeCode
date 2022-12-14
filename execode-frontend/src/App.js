@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import ModuleCourse from "./pages/ModuleCourse";
 import HomeCourse from './pages/HomeCourse';
 import Welcome from './pages/Welcome'
+import Lecturer from './pages/Lecturer';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             </Route> 
           </Route>
           <Route path='/coderunplayground' element={<Coderunner />} />
+          <Route path='/lecturer' element={<Lecturer />} />
         </Routes>
       </BrowserRouter>
     </div>

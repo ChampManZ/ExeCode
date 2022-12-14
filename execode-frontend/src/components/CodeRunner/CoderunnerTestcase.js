@@ -27,7 +27,7 @@ function CoderunnerTestcase(props) {
     const [stateTestCases, setStateTestCases] = useState([])
     const [myLength, setMyLength] = useState(0)
     let testCases = []
-    const [code, setCode] = useState("// Write your test case function here\n")
+    const [code, setCode] = useState("// Write your test case function here")
 
     const onChange = React.useCallback((value, viewUpdate) => {
       setCode(value)
@@ -65,7 +65,7 @@ function CoderunnerTestcase(props) {
 
             { isClick ? 
             <div style={divPaddingStyle}>
-                <CodeMirror className='editor-test'
+                <CodeMirror 
                 height="auto"
                 width='auto'
                 value={code}
