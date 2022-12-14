@@ -18,6 +18,7 @@ var userdata = {}
 // จากแชมป์ถึงตัวเองและเพื่อนๆ
 const client_id = ""
 const headers_authorization = ""
+const oauth2_url = ""
 
 const queryParameters = new URLSearchParams(window.location.search);
 const code = queryParameters.get("code");
@@ -30,7 +31,7 @@ const headerAdd = {
     }
 }
 
-axios.post('https://execode-users.auth.us-east-1.amazoncognito.com/oauth2/token', params, headerAdd)
+axios.post(oauth2_url, params, headerAdd)
 .then(function(res) {
     extractData(res.data.id_token)
     postUser(res.data.access_token)
