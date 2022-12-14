@@ -1,8 +1,9 @@
 import { useRef, useState, useEffect } from "react"
 
 function CoderunnerInput() {
-    const [title, setTitle] = useState('Untitled Problem Statement')
-    const [textWidth, setTextWidth] = useState(0)
+    // State Management
+    const [title, setTitle] = useState('Untitled Problem Statement')  // Initial State for Title a.k.a Default Value is Untitled Problem Statement
+    const [textWidth, setTextWidth] = useState(0)  // Initial State for width. This keep work reactive for watching text length
     const span = useRef();
 
     useEffect(() => {

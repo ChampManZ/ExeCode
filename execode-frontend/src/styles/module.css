@@ -1,0 +1,13 @@
+.module-center {
+    align-items: center;
+  }
+
+.module-h2 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.module-body {
+  font-size: 18px;
+  line-height: 160%;
+}
